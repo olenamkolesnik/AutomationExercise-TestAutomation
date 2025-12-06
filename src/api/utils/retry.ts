@@ -1,74 +1,62 @@
 import { logger } from './logger';
+import type { APIResponse } from '@playwright/test';
 
-/**
- * Generic retry utility for Playwright API or any async function.
- *
- * @param fn - Function to execute (must return a Promise)
- * @param retries - How many times to retry (default 3)
- * @param delayMs - Delay between retries in milliseconds (default 500ms)
- * @param backoff - Multiply delay by this number each retry (default 1 = disabled)
- * @param retryOn - Optional function to determine whether to retry based on error or result
- */
+export type RetryPredicate = (error: any, response?: APIResponse | null) => boolean;
+
 export async function retry<T>(
   fn: () => Promise<T>,
-  retries: number = 3,
+  attempts: number = 3,
   delayMs: number = 500,
   backoff: number = 1,
-  retryOn?: (result: T | undefined, error?: any) => boolean
+  shouldRetry?: RetryPredicate
 ): Promise<T> {
   let lastError: any = null;
-  let lastResult: T | undefined = undefined;
+  let currentDelay = delayMs;
 
-  logger.debug('Retry operation started', {
-    maxRetries: retries,
-    initialDelayMs: delayMs,
-  });
-
-  for (let attempt = 1; attempt <= retries; attempt++) {
+  for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
-      logger.debug(`Retry attempt ${attempt}/${retries}`);
-      lastResult = await fn();
-
-      // If custom retry logic was supplied
-      if (retryOn && retryOn(lastResult) === true) {
-        const retryError = new Error(
-          `Retry condition triggered on attempt ${attempt}`
-        );
-        logger.warn(`Custom retry condition triggered on attempt ${attempt}`);
-        throw retryError;
+      logger.debug(`Retry attempt ${attempt}/${attempts}`);
+      const result = await fn();
+      // If caller provided a predicate, let them decide if we should treat result as retryable.
+      if (shouldRetry) {
+        const retry = shouldRetry(undefined, (result as unknown) as APIResponse);
+        if (retry) {
+          throw new Error('Predicate signaled retry required after result');
+        }
       }
-
-      logger.info(`Retry operation succeeded on attempt ${attempt}`);
-      return lastResult;
-    } catch (err: any) {
+      return result;
+    } catch (err) {
       lastError = err;
-
-      // If this was the last attempt → throw
-      if (attempt === retries) {
-        logger.error(
-          `Retry operation failed after ${retries} attempts`,
-          lastError,
-          { finalAttempt: attempt }
-        );
+      // If last attempt, throw
+      if (attempt === attempts) {
+        logger.error(`Retry operation failed after ${attempts} attempts, finalAttempt: ${attempt}, err: ${String(err)}`);
         throw lastError;
       }
-
-      logger.warn(`Attempt ${attempt} failed, retrying...`, {
-        error: lastError.message,
-        nextDelayMs: delayMs,
-      });
-
-      // Delay before next retry
-      await new Promise((res) => setTimeout(res, delayMs));
-
-      // Apply exponential backoff if enabled
-      if (backoff > 1) {
-        delayMs *= backoff;
-        logger.debug(`Backoff applied, next delay: ${delayMs}ms`);
+      // Determine retryability:
+      const retryAllowed = isRetryableError(err);
+      if (!retryAllowed) {
+        logger.error(`Non-retryable error encountered, aborting retries',  err: ${String(err)}`);
+        throw err;
       }
+      logger.warn(`Attempt ${attempt} failed, retrying after ${currentDelay}ms,  err: ${String(err)}`);
+      await new Promise(res => setTimeout(res, currentDelay));
+      currentDelay *= backoff;
     }
   }
+  throw lastError ?? new Error('Retry failed with unknown reason');
+}
 
-  // Should never reach this, but TypeScript needs a return
-  throw lastError ?? new Error('Retry failed with unknown error');
+function isRetryableError(err: any): boolean {
+  // Playwright network errors and HTTP 5xx are retryable.
+  // For network-level, Playwright may throw its own error. We check string message.
+  const msg = String(err || '').toLowerCase();
+  if (msg.includes('ecxr') || msg.includes('net::') || msg.includes('timeout') || msg.includes('socket')) {
+    return true;
+  }
+  // If caller passed APIResponse via thrown error containing status, handle below:
+  if (err && typeof err === 'object' && 'status' in err) {
+    const status = (err as any).status;
+    if (typeof status === 'number' && status >= 500) return true;
+  }
+  return false;
 }

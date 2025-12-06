@@ -14,56 +14,46 @@ export async function wrapResponse<T>(
   });
 
   const rawText = await response.text();
-  let body: any;
+  let parsed: any;
   try {
-    body = rawText ? JSON.parse(rawText) : {};
+    parsed = rawText && rawText.trim() ? JSON.parse(rawText) : {};
   } catch (err) {
-    logger.error(`Failed to parse body as JSON ${ rawText }`);
+    logger.error(`Failed to parse response as JSON, ${ rawText }`);
     throw new Error(`Invalid JSON returned by API: ${rawText}`);
   }
 
-  logger.debug('Response body parsed', { body });
+  logger.debug('Response body parsed', { parsed });
 
-  // Validate schema (if provided) against the parsed body
+  // If schema provided, validate against full parsed body
   if (schema) {
     logger.debug('Validating response schema...');
-    validateSchema(schema, body);
+    validateSchema(schema, parsed);
     logger.info('Schema validation passed');
   }
 
-  // Required: responseCode must exist in this API
-  const responseCode = body?.responseCode;
+  const responseCode = parsed?.responseCode;
   if (responseCode === undefined || responseCode === null) {
-    // include raw body for easier debugging
-    throw new Error(
-      `Unexpected API response format. Missing responseCode. Body: ${JSON.stringify(
-        body
-      )}`
-    );
+    // For robustness, include parsed in message
+    throw new Error(`Unexpected API response format. Missing responseCode. Body: ${JSON.stringify(parsed)}`);
   }
 
-  // message may be present only for error cases — don't require it for success.
-  const message: string | undefined =
-    typeof body.message === 'string' ? body.message : undefined;
+  const message: string | undefined = typeof parsed?.message === 'string' ? parsed.message : undefined;
 
-  // The API returns payload either under "data" (common) or "user" (user-specific endpoint).
-  // Prefer 'data', then 'user', then null.
-  const data: T | null =
-    body.data !== undefined ? (body.data as T) : body.user !== undefined ? (body.user as T) : null;
+  // prefer 'data' then 'user' then null
+  const data: T | null = parsed?.data ?? parsed?.user ?? null;
 
-  // Build wrapper preserving existing ApiResponseWrapper shape
   const wrapped = new ApiResponseWrapper<T>(
-    response.status(), // transport/http status (always 200 for this API)
+    response.status(),       // transport status (always 200 for this system)
     responseCode,
-    message ?? '', // keep compatibility with existing model if it expects string
+    message,
     data
   );
 
-  logger.debug('Response wrapped successfully', {
+  logger.debug('Response wrapped', {
     httpStatus: wrapped.httpStatus,
     responseCode: wrapped.responseCode,
-    hasMessage: !!message,
-    dataPresent: data !== null,
+    hasMessage: !!wrapped.message,
+    dataPresent: wrapped.data !== null,
   });
 
   return wrapped;
