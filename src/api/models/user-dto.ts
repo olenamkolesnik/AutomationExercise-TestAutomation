@@ -1,6 +1,6 @@
 export type Title = 'Mr' | 'Mrs' | 'Miss';
 
-export interface CreateUserRequest {
+export interface UserDTO {
   title: Title;
   name: string;
   email: string;

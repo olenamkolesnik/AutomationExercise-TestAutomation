@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import {
   Title,
-  UserRegistrationModel,
-} from '../models/user-registration-model';
+  UserDTO,
+} from '../models/user-dto';
 
 const TITLES: Title[] = ['Mr', 'Mrs', 'Miss'];
 const COUNTRIES: string[] = [
@@ -22,15 +22,17 @@ const COUNTRIES: string[] = [
   'Japan',
 ];
 
-export function createUserRegistrationObject(): UserRegistrationModel {
+export function createUserRegistrationObject(): UserDTO {
+  const currentYear = new Date().getFullYear();
+  const maxYear = currentYear - 18;
   return {
     name: faker.person.firstName(),
-    email: faker.internet.email(),
+    email: `autotest+${Date.now()}@example.com`,
     password: faker.internet.password({ length: 10 }),
     title: faker.helpers.arrayElement(TITLES),
     birth_date: faker.number.int({ min: 1, max: 28 }),
     birth_month: faker.number.int({ min: 1, max: 12 }),
-    birth_year: faker.number.int({ min: 1950, max: 2024 }),
+    birth_year: faker.number.int({ min: 1950, max: maxYear}),
     firstname: faker.person.firstName(),
     lastname: faker.person.lastName(),
     company: faker.company.name(),

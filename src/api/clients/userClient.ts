@@ -4,9 +4,14 @@ import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { getUserResponseSchema } from '../schemas/get-user-response.schema';
+import { toFormPayload } from '../utils/form-helper';
+import { UserDTO } from '../models/user-dto';
+import { ApiResponseWrapper } from '../models/api-response-wrapper-model';
 
 export default class UserClient {
-  private readonly defaultFormHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' };
+  private readonly defaultFormHeaders = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
 
   constructor(private request: APIRequestContext) {
     logger.debug('UserClient initialized');
@@ -16,8 +21,10 @@ export default class UserClient {
     return retry(fn, 3, 500, 2);
   }
 
-  async createUser(userPayload: Record<string, string | number | boolean>) {
+  async createUser(user: UserDTO): Promise<ApiResponseWrapper<any>> {
     logger.info('Create user attempt');
+
+    const userPayload = toFormPayload(user);
 
     const response = await this.performRequest(() =>
       this.request.post(API_ENDPOINTS.USER.CREATE, {
@@ -29,7 +36,10 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async deleteUserByEmailAndPassword(email: string, password?: string) {
+  async deleteUserByEmailAndPassword(
+    email: string,
+    password?: string
+  ): Promise<ApiResponseWrapper<any>> {
     logger.info(`Delete user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -42,11 +52,14 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<ApiResponseWrapper<any>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
-      this.request.get(API_ENDPOINTS.USER.GET, { params: { email } })
+      this.request.get(API_ENDPOINTS.USER.GET, {
+        headers: this.defaultFormHeaders,
+        params: { email },
+      })
     );
 
     return wrapResponse(response, getUserResponseSchema);
