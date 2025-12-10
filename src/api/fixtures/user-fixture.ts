@@ -1,29 +1,24 @@
+// src/fixtures/user-fixture.ts
 import { test as base } from '@playwright/test';
 import UserClient from '../clients/userClient';
-import { createUserRegistrationObject } from '../factories/create-user-registration-payload';
-import { logger } from '../utils/logger';
 
-type UserFixture = {
-  user: ReturnType<typeof createUserRegistrationObject>;
-};
+export const test = base.extend<{
+  userClient: UserClient;
+  createdUsers: { email: string; password: string }[];
+}>({
+  userClient: async ({ request }, use) => {
+    const client = new UserClient(request);
+    await use(client);
+  },
 
-export const userFixture = base.extend<UserFixture>({
-  user: async ({ request }, use) => {
-    //Create user before test
-    const userClient = new UserClient(request);
-    const user = createUserRegistrationObject();
-    await userClient.createUser(user);
+  createdUsers: async ({userClient}, use) => {
+    const created: { email: string; password: string }[] = [];
+    await use(created);        
 
-    //Provide user to the test
-    await use(user);
-
-    //Delete user after test
-    try {
+    for (const user of created) {
       await userClient.deleteUserByEmailAndPassword(user.email, user.password);
-    } catch (error) {
-      logger.warn(`Cleanup failed — user may not exist. Error: ${error}`);
     }
   },
 });
 
-export { expect } from '@playwright/test';
+export const expect = base.expect;

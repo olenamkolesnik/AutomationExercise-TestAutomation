@@ -1,30 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../src/api/fixtures/user-fixture';
 import UserClient from '../../src/api/clients/userClient';
-import { createUserRegistrationObject } from '../../src/api/factories/create-user-registration-payload';
+import { buildUser } from '../../src/api/data/user-factory';
+import { boundaryUsers } from '../../src/api/data/user-boundaries';
 import { HTTP_STATUS } from '../../src/api/constants/http-status';
 import { UserDTO } from '../../src/api/models/user-dto';
-import { toFormPayload } from '../../src/api/utils/form-helper';
 import { logger } from '../../src/api/utils/logger';
 
 test.describe('Create User Positive Tests', () => {
-  let userClient: UserClient;
-  let user: ReturnType<typeof createUserRegistrationObject>;
-
-  test.beforeEach(({ request }) => {
-    userClient = new UserClient(request);
-    user = createUserRegistrationObject();
-  });
-
-  test.afterEach(async () => {
-    try {
-      // Clean up - delete the created user
-      await userClient.deleteUserByEmailAndPassword(user.email, user.password);
-    } catch (error) {
-      logger.warn(`Cleanup failed — user may not exist. Error: ${error}`);
-    }
-  });
-
-  test('TC11-01 — Should create user with valid required data', async () => {    
+  test('TC11-01 — Should create user with valid required data', async ({
+    userClient,
+    createdUsers,
+  }) => {
+    const user = buildUser();
 
     // Act - create user
     const response = await userClient.createUser(user);
@@ -43,5 +30,43 @@ test.describe('Create User Positive Tests', () => {
     const retrievedUser = retrieved.data as UserDTO;
     expect(retrievedUser.name).toBe(user.name);
     expect(retrievedUser.email).toBe(user.email);
+
+    createdUsers.push({ email: user.email, password: user.password });
+  });
+
+  test('TC11-03 — Create user with DOB year = 1900', async ({
+    userClient,
+    createdUsers,
+  }) => {
+    const user = boundaryUsers.dobMinYear();
+
+    const res = await userClient.createUser(user);
+    expect(res.responseCode).toBe(201);
+
+    createdUsers.push({ email: user.email, password: user.password });
+  });
+
+  test('TC11-04 — Create user with long but valid strings', async ({
+    userClient,
+    createdUsers,
+  }) => {
+    const user = boundaryUsers.longStrings();
+
+    const res = await userClient.createUser(user);
+    expect(res.responseCode).toBe(201);
+
+    createdUsers.push({ email: user.email, password: user.password });
+  });
+
+  test('TC11-05 — Create user with rare characters', async ({
+    userClient,
+    createdUsers,
+  }) => {
+    const user = boundaryUsers.rareCharacters();
+
+    const res = await userClient.createUser(user);
+    expect(res.responseCode).toBe(201);
+
+    createdUsers.push({ email: user.email, password: user.password });
   });
 });
