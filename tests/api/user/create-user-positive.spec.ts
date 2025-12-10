@@ -1,10 +1,8 @@
-import { test, expect } from '../../src/api/fixtures/user-fixture';
-import UserClient from '../../src/api/clients/userClient';
-import { buildUser } from '../../src/api/data/user-factory';
-import { boundaryUsers } from '../../src/api/data/user-boundaries';
-import { HTTP_STATUS } from '../../src/api/constants/http-status';
-import { UserDTO } from '../../src/api/models/user-dto';
-import { logger } from '../../src/api/utils/logger';
+import { test, expect } from '../../../src/api/fixtures/user-fixture';
+import { buildUser } from '../../../src/api/data/user-factory';
+import { boundaryUsers } from '../../../src/api/data/user-boundaries';
+import { HTTP_STATUS } from '../../../src/api/constants/http-status';
+import { UserDTO } from '../../../src/api/models/user-dto';
 
 test.describe('Create User Positive Tests', () => {
   test('TC11-01 — Should create user with valid required data', async ({
