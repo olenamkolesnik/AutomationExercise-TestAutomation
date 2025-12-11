@@ -1,4 +1,4 @@
-import { test, expect } from '../../../src/api/fixtures/user-fixture';
+import { test, expect } from '../../../src/api/fixtures/delete-user';
 import { buildUser } from '../../../src/api/data/user-factory';
 import { boundaryUsers } from '../../../src/api/data/user-boundaries';
 import { HTTP_STATUS } from '../../../src/api/constants/http-status';
