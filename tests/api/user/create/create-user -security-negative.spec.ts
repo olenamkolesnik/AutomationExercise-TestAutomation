@@ -1,4 +1,4 @@
-import { test, expect } from '../../../../src/api/fixtures/delete-user';
+import { test, expect } from '../../../../src/api/fixtures/delete-created-users';
 import { buildUser } from '../../../../src/api/data/user-factory';
 
 test.describe('User API - Security / Technical Negative Tests', () => {

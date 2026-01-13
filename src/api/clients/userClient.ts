@@ -4,6 +4,7 @@ import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { getUserResponseSchema } from '../schemas/get-user-response.schema';
+import { deleteAccountSchema } from '../schemas/delete-account.schema';
 import { toFormPayload } from '../utils/form-helper';
 import { UserDTO } from '../dto/user-dto';
 import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
@@ -62,6 +63,6 @@ export default class UserClient {
       })
     );
 
-    return wrapResponse(response, getUserResponseSchema);
+    return wrapResponse(response);
   }
 }

@@ -1,59 +1,58 @@
 import { APIResponse } from '@playwright/test';
 import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
 import { logger } from './logger';
-import { validateSchema } from './schemaValidator';
 
 export async function wrapResponse<T>(
-  response: APIResponse,
-  schema?: object
+  response: APIResponse
 ): Promise<ApiResponseWrapper<T>> {
   logger.debug('Wrapping API response', {
-    status: response.status(),
+    httpStatus: response.status(),
     statusText: response.statusText(),
-    hasSchema: !!schema,
   });
 
   const rawText = await response.text();
-  let parsed: any;
-  try {
-    parsed = rawText && rawText.trim() ? JSON.parse(rawText) : {};
-  } catch (err) {
-    logger.error(`Failed to parse response as JSON, ${ rawText }`);
-    throw new Error(`Invalid JSON returned by API: ${rawText}`);
+  let parsed: any = {};
+
+  if (rawText?.trim()) {
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (error) {
+      logger.error(`Failed to parse API response as JSON ${rawText}`);
+      throw new Error(`Invalid JSON returned by API. Raw response: ${rawText}`);
+    }
   }
 
-  logger.debug('Response body parsed', { parsed });
+  logger.debug('API response parsed', { parsed });
 
-  // If schema provided, validate against full parsed body
-  if (schema) {
-    logger.debug('Validating response schema...');
-    validateSchema(schema, parsed);
-    logger.info('Schema validation passed');
+  // AutomationExercise-specific invariant:
+  // responseCode is expected for all API responses
+  if (parsed?.responseCode === undefined || parsed?.responseCode === null) {
+    throw new Error(
+      `Unexpected API response format. Missing 'responseCode'. Body: ${JSON.stringify(
+        parsed
+      )}`
+    );
   }
 
-  const responseCode = parsed?.responseCode;
-  if (responseCode === undefined || responseCode === null) {
-    // For robustness, include parsed in message
-    throw new Error(`Unexpected API response format. Missing responseCode. Body: ${JSON.stringify(parsed)}`);
-  }
+  const message =
+    typeof parsed?.message === 'string' ? parsed.message : undefined;
 
-  const message: string | undefined = typeof parsed?.message === 'string' ? parsed.message : undefined;
-
-  // prefer 'data' then 'user' then null
+  // Normalize data payload (API is inconsistent across endpoints)
   const data: T | null = parsed?.data ?? parsed?.user ?? null;
 
   const wrapped = new ApiResponseWrapper<T>(
-    response.status(),       // transport status (always 200 for this system)
-    responseCode,
+    response.status(), // transport-level status (usually always 200 here)
+    parsed.responseCode, // business-level status
     message,
-    data
+    data,
+    parsed // rawBody for schema validation in tests
   );
 
-  logger.debug('Response wrapped', {
+  logger.debug('API response wrapped', {
     httpStatus: wrapped.httpStatus,
     responseCode: wrapped.responseCode,
     hasMessage: !!wrapped.message,
-    dataPresent: wrapped.data !== null,
+    hasData: wrapped.data !== null,
   });
 
   return wrapped;
