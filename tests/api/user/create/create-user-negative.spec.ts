@@ -1,6 +1,6 @@
-import { test, expect } from '../../../src/api/fixtures/api';
-import { buildUser } from '../../../src/api/data/user-factory';
-import { HTTP_STATUS } from '../../../src/api/constants/http-status';
+import { test, expect } from '../../../../src/api/fixtures/api';
+import { buildUser } from '../../../../src/api/data/user-factory';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 
 test.describe('Create User Negative Tests', () => {
   test('TC11-06: Duplicate email', async ({userClient}) => {

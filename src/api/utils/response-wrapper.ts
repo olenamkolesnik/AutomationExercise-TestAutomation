@@ -1,5 +1,5 @@
 import { APIResponse } from '@playwright/test';
-import { ApiResponseWrapper } from '../models/api-response-wrapper-model';
+import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
 import { logger } from './logger';
 import { validateSchema } from './schemaValidator';
 

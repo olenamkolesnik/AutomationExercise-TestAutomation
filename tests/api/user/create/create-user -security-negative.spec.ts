@@ -1,5 +1,5 @@
-import { test, expect } from '../../../src/api/fixtures/delete-user';
-import { buildUser } from '../../../src/api/data/user-factory';
+import { test, expect } from '../../../../src/api/fixtures/delete-user';
+import { buildUser } from '../../../../src/api/data/user-factory';
 
 test.describe('User API - Security / Technical Negative Tests', () => {
   test('TC11-16 — SQL injection attempt', async ({userClient, createdUsers}) => {

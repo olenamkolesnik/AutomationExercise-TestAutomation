@@ -1,8 +1,8 @@
-import { test, expect } from '../../../src/api/fixtures/delete-user';
-import { buildUser } from '../../../src/api/data/user-factory';
-import { API_ENDPOINTS } from '../../../src/api/constants/endpoints';
-import { toFormPayload } from '../../../src/api/utils/form-helper';
-import { HTTP_STATUS } from '../../../src/api/constants/http-status';
+import { test, expect } from '../../../../src/api/fixtures/delete-user';
+import { buildUser } from '../../../../src/api/data/user-factory';
+import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
+import { toFormPayload } from '../../../../src/api/utils/form-helper';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 
 test.describe('User API - Contract Tests', () => {
   test('TC11-20 — Validate response schema', async ({userClient, createdUsers}) => {

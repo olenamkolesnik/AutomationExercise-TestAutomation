@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Title, UserDTO } from '../models/user-dto';
+import { Title, UserDTO } from '../dto/user-dto';
 
 const TITLES: Title[] = ['Mr', 'Mrs', 'Miss'];
 const COUNTRIES = [

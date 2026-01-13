@@ -5,8 +5,8 @@ import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { getUserResponseSchema } from '../schemas/get-user-response.schema';
 import { toFormPayload } from '../utils/form-helper';
-import { UserDTO } from '../models/user-dto';
-import { ApiResponseWrapper } from '../models/api-response-wrapper-model';
+import { UserDTO } from '../dto/user-dto';
+import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
 
 export default class UserClient {
   private readonly defaultFormHeaders = {
