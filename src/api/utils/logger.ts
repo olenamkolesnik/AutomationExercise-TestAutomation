@@ -1,4 +1,5 @@
 import { maskSensitiveData } from './mask-helper';
+import { JsonObject } from '../types/json-type';
 
 export enum LogLevel {
   DEBUG = 'DEBUG',
@@ -11,7 +12,7 @@ export interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  context?: Record<string, any>;
+  context?: JsonObject;
   error?: Error;
 }
 class Logger {
@@ -34,28 +35,28 @@ class Logger {
   /**
    * Log a debug message
    */
-  debug(message: string, context?: Record<string, any>): void {
+  debug(message: string, context?: JsonObject): void {
     this.log(LogLevel.DEBUG, message, context);
   }
 
   /**
    * Log an info message
    */
-  info(message: string, context?: Record<string, any>): void {
+  info(message: string, context?: JsonObject): void {
     this.log(LogLevel.INFO, message, context);
   }
 
   /**
    * Log a warning message
    */
-  warn(message: string, context?: Record<string, any>): void {
+  warn(message: string, context?: JsonObject): void {
     this.log(LogLevel.WARN, message, context);
   }
 
   /**
    * Log an error message with optional error object
    */
-  error(message: string, error?: Error, context?: Record<string, any>): void {
+  error(message: string, error?: Error, context?: JsonObject): void {
     this.log(LogLevel.ERROR, message, context, error);
   }
 
@@ -65,7 +66,7 @@ class Logger {
   private log(
     level: LogLevel,
     message: string,
-    context?: Record<string, any>,
+    context?: JsonObject,
     error?: Error
   ): void {
     // Check if this log level should be logged based on current log level setting
@@ -74,7 +75,7 @@ class Logger {
     }
 
     // mask sensitive values in context
-    const safeContext = context ? maskSensitiveData(context) : undefined;
+    const safeContext = context ? maskSensitiveData(context) as JsonObject: undefined;
 
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),

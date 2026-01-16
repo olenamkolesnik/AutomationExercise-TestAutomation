@@ -1,6 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, APIResponse } from '@playwright/test';
 import { wrapResponse } from '../../src/api/utils/response-wrapper';
-import { getUserResponseSchema } from '../../src/api/schemas/get-user-response.schema';
+
+/**
+ * Minimal mock implementing ONLY what wrapResponse uses.
+ * Cast to APIResponse at the call site (test boundary).
+ */
+type MockApiResponse = {
+  status(): number;
+  statusText(): string;
+  text(): Promise<string>;
+};
 
 function makeApiResponse({
   status = 200,
@@ -10,19 +19,37 @@ function makeApiResponse({
   status?: number;
   statusText?: string;
   text?: string;
-}) {
+}): MockApiResponse {
   return {
     status: () => status,
     statusText: () => statusText,
     text: async () => text,
-    json: async () => JSON.parse(text),
-  } as any;
+  };
 }
+
+type UserResponseDTO = {
+  id: number;
+  title: 'Mr' | 'Mrs' | 'Miss';
+  name: string;
+  email: string;
+  birth_day: string;
+  birth_month: string;
+  birth_year: string;
+  first_name: string;
+  last_name: string;
+  company: string;
+  address1: string;
+  address2: string;
+  country: string;
+  state: string;
+  city: string;
+  zipcode: string;
+};
 
 test('wrapResponse — success shape with user (validates schema)', async () => {
   const body = {
     responseCode: 200,
-    user: {
+    data: {
       id: 123,
       name: 'Alice',
       email: 'alice@example.com',
@@ -41,30 +68,44 @@ test('wrapResponse — success shape with user (validates schema)', async () => 
       zipcode: '10001',
     },
   };
-  const raw = JSON.stringify(body);
-  const mockResp = makeApiResponse({ text: raw });
 
-  const wrapped = await wrapResponse(mockResp, getUserResponseSchema);
+  const mockResp = makeApiResponse({ text: JSON.stringify(body) });
+
+  const wrapped = await wrapResponse<UserResponseDTO>(
+    mockResp as unknown as APIResponse
+  );
 
   expect(wrapped.responseCode).toBe(200);
-  expect(wrapped.data).not.toBeNull();
   expect(wrapped.message).toBeUndefined();
-  const user = wrapped.data as any;
-  expect(user.email).toBe('alice@example.com');
+  expect(wrapped.data).not.toBeNull();
+
+  expect(wrapped.data?.email).toBe('alice@example.com');
 });
 
-test('wrapResponse — success shape with data', async () => {
-  const body = { responseCode: 200, data: { id: 222, value: 'some payload' } };
-  const raw = JSON.stringify(body);
-  const mockResp = makeApiResponse({ text: raw });
+test('wrapResponse — success shape with generic data payload', async () => {
+  type GenericDataDTO = {
+    id: number;
+    value: string;
+  };
 
-  const wrapped = await wrapResponse(mockResp);
+  const body = {
+    responseCode: 200,
+    data: {
+      id: 222,
+      value: 'some payload',
+    },
+  };
+
+  const mockResp = makeApiResponse({ text: JSON.stringify(body) });
+
+  const wrapped = await wrapResponse<GenericDataDTO>(
+    mockResp as unknown as APIResponse
+  );
 
   expect(wrapped.responseCode).toBe(200);
   expect(wrapped.data).not.toBeNull();
-  const d = wrapped.data as any;
-  expect(d.id).toBe(222);
-  expect(d.value).toBe('some payload');
+  expect(wrapped.data?.id).toBe(222);
+  expect(wrapped.data?.value).toBe('some payload');
 });
 
 test('wrapResponse — error shape with message', async () => {
@@ -72,10 +113,10 @@ test('wrapResponse — error shape with message', async () => {
     responseCode: 400,
     message: 'Bad request, email parameter is missing',
   };
-  const raw = JSON.stringify(body);
-  const mockResp = makeApiResponse({ text: raw });
 
-  const wrapped = await wrapResponse(mockResp);
+  const mockResp = makeApiResponse({ text: JSON.stringify(body) });
+
+  const wrapped = await wrapResponse<never>(mockResp as unknown as APIResponse);
 
   expect(wrapped.responseCode).toBe(400);
   expect(wrapped.message).toContain('Bad request');
@@ -84,5 +125,8 @@ test('wrapResponse — error shape with message', async () => {
 
 test('wrapResponse — invalid JSON throws', async () => {
   const mockResp = makeApiResponse({ text: 'not a json' });
-  await expect(() => wrapResponse(mockResp)).rejects.toThrow(/Invalid JSON/);
+
+  await expect(() =>
+    wrapResponse(mockResp as unknown as APIResponse)
+  ).rejects.toThrow(/Invalid JSON/);
 });

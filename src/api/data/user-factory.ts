@@ -19,7 +19,7 @@ const COUNTRIES = [
   'Japan',
 ];
 
-export interface UserOverrides extends Partial<UserDTO> {}
+export type UserOverrides = Partial<UserDTO>
 
 export function buildUser(overrides: UserOverrides = {}): UserDTO {
   const currentYear = new Date().getFullYear();

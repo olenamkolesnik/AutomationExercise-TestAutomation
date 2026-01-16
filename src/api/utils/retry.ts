@@ -1,7 +1,7 @@
 import { logger } from './logger';
 import type { APIResponse } from '@playwright/test';
 
-export type RetryPredicate = (error: any, response?: APIResponse | null) => boolean;
+export type RetryPredicate = (error: unknown, response?: APIResponse | null) => boolean;
 
 export async function retry<T>(
   fn: () => Promise<T>,
@@ -10,7 +10,7 @@ export async function retry<T>(
   backoff: number = 1,
   shouldRetry?: RetryPredicate
 ): Promise<T> {
-  let lastError: any = null;
+  let lastError: unknown = null;
   let currentDelay = delayMs;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -46,7 +46,7 @@ export async function retry<T>(
   throw lastError ?? new Error('Retry failed with unknown reason');
 }
 
-function isRetryableError(err: any): boolean {
+function isRetryableError(err: unknown): boolean {
   // Playwright network errors and HTTP 5xx are retryable.
   // For network-level, Playwright may throw its own error. We check string message.
   const msg = String(err || '').toLowerCase();
@@ -55,7 +55,7 @@ function isRetryableError(err: any): boolean {
   }
   // If caller passed APIResponse via thrown error containing status, handle below:
   if (err && typeof err === 'object' && 'status' in err) {
-    const status = (err as any).status;
+    const status = (err as { status?: unknown }).status;
     if (typeof status === 'number' && status >= 500) return true;
   }
   return false;

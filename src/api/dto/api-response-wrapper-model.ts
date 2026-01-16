@@ -1,4 +1,4 @@
-export class ApiResponseWrapper<T = any> {
+export class ApiResponseWrapper<T = unknown> {
   constructor(
     public readonly httpStatus: number,
     public readonly responseCode: number,

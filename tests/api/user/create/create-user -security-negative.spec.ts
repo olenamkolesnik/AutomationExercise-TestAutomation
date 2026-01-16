@@ -2,7 +2,7 @@ import { test, expect } from '../../../../src/api/fixtures/delete-created-users'
 import { buildUser } from '../../../../src/api/data/user-factory';
 
 test.describe('User API - Security / Technical Negative Tests', () => {
-  test('TC11-16 — SQL injection attempt', async ({userClient, createdUsers}) => {
+  test('TC11-16 — SQL injection attempt', async ({userClient}) => {
     const user = buildUser({ firstname: "John'); DROP TABLE users; --" });
     const res = await userClient.createUser(user);
     expect([400, 422]).toContain(res.responseCode); // 422 if backend uses validation

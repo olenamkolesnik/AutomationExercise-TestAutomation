@@ -11,18 +11,22 @@ export async function wrapResponse<T>(
   });
 
   const rawText = await response.text();
-  let parsed: any = {};
+  let parsed: { responseCode: number; message?: string; data?: T } | undefined;
 
   if (rawText?.trim()) {
     try {
-      parsed = JSON.parse(rawText);
+      parsed = JSON.parse(rawText) as { responseCode: number; message?: string; data?: T };
     } catch (error) {
-      logger.error(`Failed to parse API response as JSON ${rawText}`);
+      logger.error(`Failed to parse API response as JSON ${rawText}, error: ${error}`);
       throw new Error(`Invalid JSON returned by API. Raw response: ${rawText}`);
     }
   }
 
-  logger.debug('API response parsed', { parsed });
+  if (!parsed) {
+    throw new Error(`Empty API response. Raw response: ${rawText}`);
+  }
+
+  logger.debug(`API response parsed', ${ parsed.responseCode}, hasMessage: ${!!parsed.message }`);
 
   // AutomationExercise-specific invariant:
   // responseCode is expected for all API responses
@@ -38,7 +42,7 @@ export async function wrapResponse<T>(
     typeof parsed?.message === 'string' ? parsed.message : undefined;
 
   // Normalize data payload (API is inconsistent across endpoints)
-  const data: T | null = parsed?.data ?? parsed?.user ?? null;
+  const data: T | null = parsed?.data ?? null;
 
   const wrapped = new ApiResponseWrapper<T>(
     response.status(), // transport-level status (usually always 200 here)

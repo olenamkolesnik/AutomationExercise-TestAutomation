@@ -3,11 +3,10 @@ import { logger } from '../utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
-import { getUserResponseSchema } from '../schemas/get-user-response.schema';
-import { deleteAccountSchema } from '../schemas/delete-account.schema';
 import { toFormPayload } from '../utils/form-helper';
 import { UserDTO } from '../dto/user-dto';
 import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
+import { ApiStatusResponse } from '../dto/api-status-response';
 
 export default class UserClient {
   private readonly defaultFormHeaders = {
@@ -22,7 +21,7 @@ export default class UserClient {
     return retry(fn, 3, 500, 2);
   }
 
-  async createUser(user: UserDTO): Promise<ApiResponseWrapper<any>> {
+  async createUser(user: UserDTO): Promise<ApiResponseWrapper<ApiStatusResponse>> {
     logger.info('Create user attempt');
 
     const userPayload = toFormPayload(user);
@@ -40,7 +39,7 @@ export default class UserClient {
   async deleteUserByEmailAndPassword(
     email: string,
     password?: string
-  ): Promise<ApiResponseWrapper<any>> {
+  ): Promise<ApiResponseWrapper<ApiStatusResponse>> {
     logger.info(`Delete user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -53,7 +52,7 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async getUserByEmail(email: string): Promise<ApiResponseWrapper<any>> {
+  async getUserByEmail(email: string): Promise<ApiResponseWrapper<ApiStatusResponse>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>

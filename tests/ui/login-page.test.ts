@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { LoginPage } from '../../src/ui/pages/login-page';
 import { HeaderComponent } from '../../src/ui/components/header-component';
 import { FooterComponent } from '../../src/ui/components/footer-component';
