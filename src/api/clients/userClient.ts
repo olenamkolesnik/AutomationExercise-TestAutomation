@@ -52,7 +52,7 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async getUserByEmail(email: string): Promise<ApiResponseWrapper<ApiStatusResponse>> {
+  async getUserByEmail(email: string): Promise<ApiResponseWrapper<UserDTO | ApiStatusResponse>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -62,6 +62,6 @@ export default class UserClient {
       })
     );
 
-    return wrapResponse(response);
+    return wrapResponse<UserDTO | ApiStatusResponse>(response);
   }
 }

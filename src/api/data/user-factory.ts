@@ -45,5 +45,5 @@ export function buildUser(overrides: UserOverrides = {}): UserDTO {
     mobile_number: faker.phone.number(),
   };
 
-  return { ...base, ...overrides };
+  return { ...base, ...overrides } as UserDTO;
 }

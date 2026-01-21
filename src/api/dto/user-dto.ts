@@ -1,6 +1,7 @@
+import type { JsonObject } from '../types/json-type';
 export type Title = 'Mr' | 'Mrs' | 'Miss';
 
-export interface UserDTO {
+export interface UserDTO extends JsonObject {
   title: Title;
   name: string;
   email: string;

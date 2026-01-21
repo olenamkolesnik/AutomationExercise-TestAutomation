@@ -1,8 +1,11 @@
-import { test, expect } from '../../../../src/api/fixtures/delete-created-users';
+import {
+  test,
+  expect,
+} from '../../../../src/api/fixtures/delete-created-users';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { boundaryUsers } from '../../../../src/api/data/user-boundaries';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { UserDTO } from '../../../../src/api/dto/user-dto';
+import { isUserDTO } from '../../../../src/api/dto/user-guard';
 
 test.describe('Create User Positive Tests', () => {
   test('TC11-01 — Should create user with valid required data', async ({
@@ -25,9 +28,13 @@ test.describe('Create User Positive Tests', () => {
     expect(retrieved.responseCode).toBe(HTTP_STATUS.OK);
     expect(retrieved.data).toBeTruthy();
 
-    const retrievedUser = retrieved.data as UserDTO;
-    expect(retrievedUser.name).toBe(user.name);
-    expect(retrievedUser.email).toBe(user.email);
+    if (!isUserDTO(retrieved.data)) {
+      throw new Error(
+        `Expected UserDTO, got ${JSON.stringify(retrieved.data)}`
+      );
+    }
+    expect(retrieved.data.name).toBe(user.name);
+    expect(retrieved.data.email).toBe(user.email);
 
     createdUsers.push({ email: user.email, password: user.password });
   });
@@ -61,6 +68,18 @@ test.describe('Create User Positive Tests', () => {
     createdUsers,
   }) => {
     const user = boundaryUsers.rareCharacters();
+
+    const res = await userClient.createUser(user);
+    expect(res.responseCode).toBe(201);
+
+    createdUsers.push({ email: user.email, password: user.password });
+  });
+
+  test('TC11-06 — Create user with max DOB year = current year - 18', async ({
+    userClient,
+    createdUsers,
+  }) => {
+    const user = boundaryUsers.dobMaxYear();
 
     const res = await userClient.createUser(user);
     expect(res.responseCode).toBe(201);

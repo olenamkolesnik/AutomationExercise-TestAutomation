@@ -1,36 +1,35 @@
 import { APIResponse } from '@playwright/test';
 import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
 import { logger } from './logger';
+import type { JsonValue } from '../types/json-type';
 
-export async function wrapResponse<T>(
+type RawApiResponse = {
+  responseCode: number;
+  message?: string;
+  [key: string]: JsonValue | undefined;
+};
+
+export async function wrapResponse<T extends JsonValue>(
   response: APIResponse
 ): Promise<ApiResponseWrapper<T>> {
-  logger.debug('Wrapping API response', {
-    httpStatus: response.status(),
-    statusText: response.statusText(),
-  });
-
   const rawText = await response.text();
-  let parsed: { responseCode: number; message?: string; data?: T } | undefined;
 
-  if (rawText?.trim()) {
-    try {
-      parsed = JSON.parse(rawText) as { responseCode: number; message?: string; data?: T };
-    } catch (error) {
-      logger.error(`Failed to parse API response as JSON ${rawText}, error: ${error}`);
-      throw new Error(`Invalid JSON returned by API. Raw response: ${rawText}`);
-    }
+  if (!rawText?.trim()) {
+    throw new Error('Empty API response body');
   }
 
-  if (!parsed) {
-    throw new Error(`Empty API response. Raw response: ${rawText}`);
+  let parsed: RawApiResponse;
+
+  try {
+    parsed = JSON.parse(rawText) as RawApiResponse;
+  } catch (error) {
+    logger.error(`Failed to parse API response as JSON, httpStatus: ${response.status()}, rawResponse: ${rawText}, error: ${error}`);
+    throw new Error(`Invalid JSON returned by API. Raw response: ${rawText}`);
   }
 
-  logger.debug(`API response parsed', ${ parsed.responseCode}, hasMessage: ${!!parsed.message }`);
+  const { responseCode, message, ...rest } = parsed;
 
-  // AutomationExercise-specific invariant:
-  // responseCode is expected for all API responses
-  if (parsed?.responseCode === undefined || parsed?.responseCode === null) {
+  if (responseCode === undefined || responseCode === null) {
     throw new Error(
       `Unexpected API response format. Missing 'responseCode'. Body: ${JSON.stringify(
         parsed
@@ -38,26 +37,33 @@ export async function wrapResponse<T>(
     );
   }
 
-  const message =
-    typeof parsed?.message === 'string' ? parsed.message : undefined;
-
-  // Normalize data payload (API is inconsistent across endpoints)
-  const data: T | null = parsed?.data ?? null;
-
-  const wrapped = new ApiResponseWrapper<T>(
-    response.status(), // transport-level status (usually always 200 here)
-    parsed.responseCode, // business-level status
-    message,
-    data,
-    parsed // rawBody for schema validation in tests
+  // Extract dynamic payload (AutomationExercise API behavior)
+  const payloadEntries = Object.entries(rest).filter(
+    ([, value]) => value !== undefined
   );
 
-  logger.debug('API response wrapped', {
-    httpStatus: wrapped.httpStatus,
-    responseCode: wrapped.responseCode,
-    hasMessage: !!wrapped.message,
-    hasData: wrapped.data !== null,
-  });
+  let data: T | null = null;
 
-  return wrapped;
+  if (payloadEntries.length === 1) {
+    data = payloadEntries[0][1] as T;
+  } else if (payloadEntries.length > 1) {
+    data = rest as T;
+  }
+
+  logger.debug('API response processed', {
+    httpStatus: response.status(),
+    responseCode,
+    message: message ?? null,
+    payloadKeys: payloadEntries.map(([key]) => key),
+    hasData: data !== null,
+    payload: data ?? null,
+  });  
+
+  return new ApiResponseWrapper<T>(
+    response.status(), // transport-level status
+    responseCode,      // business-level status
+    typeof message === 'string' ? message : undefined,
+    data,
+    parsed             // raw body for test-level assertions
+  );
 }
