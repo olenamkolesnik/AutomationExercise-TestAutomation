@@ -1,5 +1,5 @@
 import { APIResponse } from '@playwright/test';
-import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
+import { ApiResponse } from '../models/api-response';
 import { logger } from './logger';
 import type { JsonValue } from '../types/json-type';
 
@@ -11,7 +11,7 @@ type RawApiResponse = {
 
 export async function wrapResponse<T extends JsonValue>(
   response: APIResponse
-): Promise<ApiResponseWrapper<T>> {
+): Promise<ApiResponse<T>> {
   const rawText = await response.text();
 
   if (!rawText?.trim()) {
@@ -59,7 +59,7 @@ export async function wrapResponse<T extends JsonValue>(
     payload: data ?? null,
   });  
 
-  return new ApiResponseWrapper<T>(
+  return new ApiResponse<T>(
     response.status(), // transport-level status
     responseCode,      // business-level status
     typeof message === 'string' ? message : undefined,

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { Title, UserDTO } from '../dto/user-dto';
+import { Title, CreateUserRequest } from '../models/requests/create-user.request';
+import { logger } from '../utils/logger';
 
 const TITLES: Title[] = ['Mr', 'Mrs', 'Miss'];
 const COUNTRIES = [
@@ -19,13 +20,13 @@ const COUNTRIES = [
   'Japan',
 ];
 
-export type UserOverrides = Partial<UserDTO>
+export type UserOverrides = Partial<CreateUserRequest>;
 
-export function buildUser(overrides: UserOverrides = {}): UserDTO {
+export function buildUser(overrides: UserOverrides = {}): CreateUserRequest {
   const currentYear = new Date().getFullYear();
   const maxYear = currentYear - 18;
 
-  const base: UserDTO = {
+  const base: CreateUserRequest = {
     name: faker.person.firstName(),
     email: `autotest+${Date.now()}@example.com`,
     password: faker.internet.password({ length: 10 }),
@@ -45,5 +46,7 @@ export function buildUser(overrides: UserOverrides = {}): UserDTO {
     mobile_number: faker.phone.number(),
   };
 
-  return { ...base, ...overrides } as UserDTO;
+  logger.debug(`Built user data: ${JSON.stringify({ ...base, ...overrides })}`);
+
+  return { ...base, ...overrides } as CreateUserRequest;
 }

@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
-import { isUserDTO } from '../dto/user-guard';
-import { UserDTO } from '../dto/user-dto';
+import { isUserDetailsResponse } from '../models/guards/user.guard';
+import { CreateUserRequest } from '../models/requests/create-user.request';
 
-export function assertUserDTO(data: unknown): asserts data is UserDTO {
+export function assertUserDetailsResponse(data: unknown): asserts data is CreateUserRequest {
   expect(
-    isUserDTO(data),
+    isUserDetailsResponse(data),
     `Expected UserDTO, but received: ${JSON.stringify(data)}`
   ).toBe(true);
 }

@@ -4,9 +4,10 @@ import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { toFormPayload } from '../utils/form-helper';
-import { UserDTO } from '../dto/user-dto';
-import { ApiResponseWrapper } from '../dto/api-response-wrapper-model';
-import { ApiStatusResponse } from '../dto/api-status-response';
+import { CreateUserRequest } from '../models/requests/create-user.request';
+import { ApiResponse } from '../models/api-response';
+import { commonResponse } from '../models/responses/common.response';
+import { UserDetailsResponse } from '../models/responses/user-details.response';
 
 export default class UserClient {
   private readonly defaultFormHeaders = {
@@ -21,7 +22,7 @@ export default class UserClient {
     return retry(fn, 3, 500, 2);
   }
 
-  async createUser(user: UserDTO): Promise<ApiResponseWrapper<ApiStatusResponse>> {
+  async createUser(user: CreateUserRequest): Promise<ApiResponse<commonResponse>> {
     logger.info('Create user attempt');
 
     const userPayload = toFormPayload(user);
@@ -39,7 +40,7 @@ export default class UserClient {
   async deleteUserByEmailAndPassword(
     email: string,
     password?: string
-  ): Promise<ApiResponseWrapper<ApiStatusResponse>> {
+  ): Promise<ApiResponse<commonResponse>> {
     logger.info(`Delete user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -52,7 +53,7 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async getUserByEmail(email: string): Promise<ApiResponseWrapper<UserDTO | ApiStatusResponse>> {
+  async getUserByEmail(email: string): Promise<ApiResponse<UserDetailsResponse | commonResponse>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -62,6 +63,6 @@ export default class UserClient {
       })
     );
 
-    return wrapResponse<UserDTO | ApiStatusResponse>(response);
+    return wrapResponse<UserDetailsResponse | commonResponse>(response);
   }
 }

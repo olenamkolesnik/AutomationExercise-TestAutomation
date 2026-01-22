@@ -1,9 +1,9 @@
 import { buildUser } from '../data/user-factory';
-import { UserDTO } from '../dto/user-dto';
+import { CreateUserRequest } from '../models/requests/create-user.request';
 import { test as base } from './api';
 
 export const test = base.extend<{
-  testUser: UserDTO;
+  testUser: CreateUserRequest;
 }>({
   testUser: async ({ userClient }, use) => {
     const user = buildUser();
