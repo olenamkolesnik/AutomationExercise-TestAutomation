@@ -1,4 +1,4 @@
-export const deleteAccountSchema = {
+export const commonResponseSchema = {
   type: 'object',
   required: ['responseCode', 'message'],
   properties: {

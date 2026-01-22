@@ -37,8 +37,6 @@ test.describe('Create User Negative Tests', () => {
       expect(response.responseCode).toBe(HTTP_STATUS.BAD_REQUEST);
       // @NOTE: This assertion is here to show intended validation, but the backend currently returns a wrong message.
       expect.soft(response.message).toContain('Invalid email format');
-
-      userClient.deleteUserByEmailAndPassword(user.email, user.password);
     });
   });
 
