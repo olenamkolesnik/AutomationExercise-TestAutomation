@@ -12,7 +12,10 @@ test.describe('Create User Positive Tests', () => {
     const response = await userClient.createUser(user);
 
     expect(response.responseCode).toBe(HTTP_STATUS.CREATED);
+    expect(typeof response.message).toBe('string');
     expect(response.message).toContain('User created!');
+    expect(response.message).toBeTruthy();
+    expect(response.data).toBeNull();
 
     const retrieved = await userClient.getUserByEmail(user.email);
     expect(retrieved.responseCode).toBe(HTTP_STATUS.OK);
