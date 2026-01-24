@@ -1,9 +1,8 @@
 import { test, expect } from '../../../../src/api/fixtures/user-fixtures';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { getUserResponseSchema } from '../../../../src/api/schemas/get-user-response.schema';
+import { getUserResponseSchema } from '../../../../src/api/schemas/get-user.response.schema';
 import { assertUserDetailsResponse } from '../../../../src/api/assertions/user-assert';
-import { get } from 'http';
 
 test.describe('API: Get User Detail By Email — Positive', () => {
   test('Should return user details for a valid registered email', async ({
@@ -14,13 +13,13 @@ test.describe('API: Get User Detail By Email — Positive', () => {
 
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBeUndefined();
-   // expectSchema(response, getUserResponseSchema);
+    expectSchema(response, getUserResponseSchema);
 
     expect(response.data).not.toBeNull();
     assertUserDetailsResponse(response.data);
     const retrievedUser = response.data;
     expect(retrievedUser.id).toBeDefined();
-    expect(retrievedUser.name).toBe(testUser.name); 
+    expect(retrievedUser.name).toBe(testUser.name);
     expect(retrievedUser.email).toBe(testUser.email);
     expect(retrievedUser.title).toBe(testUser.title);
     expect(retrievedUser.birth_day).toBe(testUser.birth_date.toString());
@@ -32,36 +31,8 @@ test.describe('API: Get User Detail By Email — Positive', () => {
     expect(retrievedUser.address1).toBe(testUser.address1);
     expect(retrievedUser.address2).toBe(testUser.address2);
     expect(retrievedUser.country).toBe(testUser.country);
-    expect(retrievedUser.zipcode).toBe(testUser.zipcode);//
+    expect(retrievedUser.zipcode).toBe(testUser.zipcode); //
     expect(retrievedUser.state).toBe(testUser.state);
     expect(retrievedUser.city).toBe(testUser.city);
   });
-/*
-  test('TC02 — should return same user for email with different case', async ({
-    userClient,
-    testUser,
-  }) => {
-    const upperCaseEmail = testUser.email.toUpperCase();
-
-    const response = await userClient.getUserByEmail(upperCaseEmail);
-
-    expect(response.responseCode).toBe(HTTP_STATUS.OK);
-    expectSchema(response, getUserResponseSchema);
-
-    expect(response.data.email).toBe(testUser.email);
-  });
-
-  test('TC03 — should return same user for email with leading and trailing spaces', async ({
-    userClient,
-    testUser,
-  }) => {
-    const emailWithSpaces = `  ${testUser.email}  `;
-
-    const response = await userClient.getUserByEmail(emailWithSpaces);
-
-    expect(response.responseCode).toBe(HTTP_STATUS.OK);
-    expectSchema(response, userDetailResponseSchema);
-
-    expect(response.user.email).toBe(testUser.email);
-  });*/
 });

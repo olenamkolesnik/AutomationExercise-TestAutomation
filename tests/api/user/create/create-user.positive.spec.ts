@@ -1,7 +1,7 @@
 import { test, expect } from '../../../../src/api/fixtures/api';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { assertUserDTO } from '../../../../src/api/assertions/user-assert';
+import { assertUserDetailsResponse } from '../../../../src/api/assertions/user-assert';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 
@@ -22,7 +22,7 @@ test.describe('Create User Positive Tests', () => {
 
     const retrieved = await userClient.getUserByEmail(user.email);
     expect(retrieved.responseCode).toBe(HTTP_STATUS.OK);
-    assertUserDTO(retrieved.data);
+    assertUserDetailsResponse(retrieved.data);
     expect(retrieved.data.name).toBe(user.name);
     expect(retrieved.data.email).toBe(user.email);
 
