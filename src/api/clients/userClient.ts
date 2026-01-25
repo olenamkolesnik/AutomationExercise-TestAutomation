@@ -8,6 +8,7 @@ import { CreateUserRequest } from '../models/requests/create-user.request';
 import { ApiResponse } from '../models/api-response';
 import { commonResponse } from '../models/responses/common.response';
 import { UserDetailsResponse } from '../models/responses/user-details.response';
+import { UpdateUserRequest } from '../models/requests/update-user.request';
 
 export default class UserClient {
   private readonly defaultFormHeaders = {
@@ -64,5 +65,20 @@ export default class UserClient {
     );
 
     return wrapResponse<UserDetailsResponse | commonResponse>(response);
+  }
+
+  async updateUser(user: UpdateUserRequest): Promise<ApiResponse<commonResponse>> {
+    logger.info('Update user attempt');
+
+    const userPayload = toFormPayload(user);
+
+    const response = await this.performRequest(() =>
+      this.request.put(API_ENDPOINTS.USER.UPDATE, {
+        headers: this.defaultFormHeaders,
+        form: userPayload,
+      })
+    );
+
+    return wrapResponse(response);
   }
 }

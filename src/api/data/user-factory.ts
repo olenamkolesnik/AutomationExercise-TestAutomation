@@ -1,24 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { Title, CreateUserRequest } from '../models/requests/create-user.request';
+import { CreateUserRequest } from '../models/requests/create-user.request';
 import { logger } from '../utils/logger';
-
-const TITLES: Title[] = ['Mr', 'Mrs', 'Miss'];
-const COUNTRIES = [
-  'India',
-  'United States',
-  'Canada',
-  'Australia',
-  'Israel',
-  'Singapore',
-  'New Zealand',
-  'United Kingdom',
-  'Turkey',
-  'South Africa',
-  'Germany',
-  'France',
-  'Netherlands',
-  'Japan',
-];
+import { TITLES } from '../constants/titles';
+import { COUNTRIES } from '../constants/countries';
 
 export type UserOverrides = Partial<CreateUserRequest>;
 

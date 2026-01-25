@@ -12,13 +12,11 @@ test.describe('API: Delete Account - Positive', () => {
       testUser.email,
       testUser.password,
     );
-
+    expectSchema(response, commonResponseSchema);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBe('Account deleted!');
-    expectSchema(response, commonResponseSchema);
 
     const getUserResponse = await userClient.getUserByEmail(testUser.email);
-
     expect(getUserResponse.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(getUserResponse.message).toBe(
       'Account not found with this email, try another email!',

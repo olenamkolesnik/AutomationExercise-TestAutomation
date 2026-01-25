@@ -1,7 +1,7 @@
 import type { JsonObject } from '../../types/json-type';
 import { Title } from '../../constants/titles';
 
-export interface CreateUserRequest extends JsonObject {
+export interface UpdateUserRequest extends JsonObject {
   title: Title;
   name: string;
   email: string;
