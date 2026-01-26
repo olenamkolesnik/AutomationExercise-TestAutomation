@@ -1,20 +1,26 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 export class FooterComponent {
-  readonly page: Page;
-  readonly footerLocator: Locator;
+  readonly footer: Locator;
+  readonly copyright: Locator;
+  readonly subscriptionText: Locator;
+  readonly subscribeInput: Locator;
+  readonly subscribeButton: Locator;
+
   constructor(page: Page) {
-    this.page = page;
-    this.footerLocator = page.locator('#footer');
+    this.footer = page.locator('#footer');
+    this.subscribeInput = page.locator('#susbscribe_email');
+    this.subscribeButton = page.locator('#subscribe');
+    this.copyright = page.getByText(/Copyright © \d{4} All rights/);
+    this.subscriptionText = page.getByText(`Get the most recent updates from our site and be updated your self...`);
   }
-  async assertAriaStructure() {
-    await expect(this.footerLocator).toMatchAriaSnapshot(`
+
+  accessibilityContract(): string {
+    return `
       - contentinfo:
         - heading "Subscription" [level=2]
         - textbox "Your email address"
         - button
-        - paragraph: Get the most recent updates from our site and be updated your self...
-        - paragraph: /Copyright © \\d+ All rights reserved/
-      `);
-  };
+      `;
+  }
 }
