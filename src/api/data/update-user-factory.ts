@@ -1,5 +1,5 @@
 import { UpdateUserRequest } from '../models/requests/update-user.request';
-import { logger } from '../utils/logger';
+import { logger } from '../../common/utils/logger';
 
 export type UpdateAccountOverrides = Partial<UpdateUserRequest>;
 

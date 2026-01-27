@@ -1,5 +1,5 @@
 import { APIRequestContext } from '@playwright/test';
-import { logger } from '../utils/logger';
+import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';

@@ -1,4 +1,4 @@
-import type { JsonObject } from '../../types/json-type';
+import type { JsonObject } from '../../../common/types/json-type';
 import { Title } from '../../constants/titles';
 
 export interface CreateUserRequest extends JsonObject {

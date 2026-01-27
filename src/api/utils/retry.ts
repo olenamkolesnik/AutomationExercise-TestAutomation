@@ -1,4 +1,4 @@
-import { logger } from './logger';
+import { logger } from '../../common/utils/logger';
 import type { APIResponse } from '@playwright/test';
 
 export type RetryPredicate = (error: unknown, response?: APIResponse | null) => boolean;

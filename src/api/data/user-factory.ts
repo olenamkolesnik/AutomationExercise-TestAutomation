@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { CreateUserRequest } from '../models/requests/create-user.request';
-import { logger } from '../utils/logger';
+import { logger } from '../../../src/common/utils/logger';
 import { TITLES } from '../constants/titles';
 import { COUNTRIES } from '../constants/countries';
 

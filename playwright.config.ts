@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import {logger, LogLevel} from './src/api/utils/logger';
+import {logger, LogLevel} from './src/common/utils/logger';
 import { env } from 'process';
 
 // Load .env from project root

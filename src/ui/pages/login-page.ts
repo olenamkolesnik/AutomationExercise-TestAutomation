@@ -1,4 +1,5 @@
 import { type Locator, type Page } from '@playwright/test';
+import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 export class LoginPage {
   readonly page: Page;
   readonly loginForm: Locator;
@@ -15,8 +16,10 @@ export class LoginPage {
 
     this.loginForm = page.locator('.login-form');
     this.emailInputLoginForm = this.loginForm.locator('input[name="email"]');
-    this.passwordInputLoginForm = this.loginForm.locator('input[name="password"]');
-    this.loginButton = this.loginForm.getByRole('button', { name: 'Login' })
+    this.passwordInputLoginForm = this.loginForm.locator(
+      'input[name="password"]',
+    );
+    this.loginButton = this.loginForm.getByRole('button', { name: 'Login' });
 
     this.signupForm = page.locator('.signup-form');
     this.nameInputSignupForm = this.signupForm.locator('input[name="name"]');
@@ -28,7 +31,7 @@ export class LoginPage {
     await this.page.goto('/login');
   }
 
-  loginFormAccessibilityContract(): string {  
+  loginFormAccessibilityContract(): string {
     return `
     - heading "Login to your account" [level=2]
     - textbox "Email Address"
@@ -42,5 +45,14 @@ export class LoginPage {
     - textbox "Name"
     - textbox "Email Address"
     - button "Signup"`;
+  }
+
+  async fillAndSubmitSignupForm(newUser: CreateUserRequest) {
+    await this.nameInputSignupForm.fill(newUser.name);
+    await this.emailInputSignupForm.fill(newUser.email);
+    await Promise.all([
+      this.page.waitForURL(/\/signup/),
+      this.signupButton.click(),
+    ]);
   }
 }

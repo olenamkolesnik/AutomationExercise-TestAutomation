@@ -1,4 +1,4 @@
-import type { JsonObject } from '../../types/json-type';
+import type { JsonObject } from '../../../common/types/json-type';
 export interface UserDetailsResponse extends JsonObject {
   id: number;
   name: string;
