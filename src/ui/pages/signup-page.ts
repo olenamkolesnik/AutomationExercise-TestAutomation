@@ -2,7 +2,6 @@ import { type Locator, type Page } from '@playwright/test';
 import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 import { BasePage } from './base-page';
 export class SignupPage extends BasePage {
-  readonly page: Page;
   readonly nameInput: Locator;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
@@ -24,7 +23,6 @@ export class SignupPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.page = page;
     this.nameInput = this.page.locator('input[name="name"]');
     this.emailInput = this.page.locator('input[name="email"]');
     this.passwordInput = this.page.getByRole('textbox', { name: 'Password *' });

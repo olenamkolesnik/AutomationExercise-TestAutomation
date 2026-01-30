@@ -25,6 +25,7 @@ export class LoginPage {
     this.nameInputSignupForm = this.signupForm.locator('input[name="name"]');
     this.emailInputSignupForm = this.signupForm.locator('input[name="email"]');
     this.signupButton = this.signupForm.getByRole('button', { name: 'Signup' });
+    
   }
 
   async navigateToLogin() {
@@ -54,5 +55,11 @@ export class LoginPage {
       this.page.waitForURL(/\/signup/),
       this.signupButton.click(),
     ]);
+  }
+
+  async fillAndSubmitLoginForm(user: CreateUserRequest) {
+    await this.emailInputLoginForm.fill(user.email);
+    await this.passwordInputLoginForm.fill(user.password);
+    await this.loginButton.click();
   }
 }
