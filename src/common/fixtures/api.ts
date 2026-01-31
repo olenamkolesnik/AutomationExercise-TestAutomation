@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import UserClient from '../clients/userClient';
+import UserClient from '../../api/clients/userClient';
 
 export const test = base.extend<{ userClient: UserClient }>({
   userClient: async ({ request }, use) => {

@@ -10,7 +10,7 @@ export class SignupFlow {
   async createNewUser(user: CreateUserRequest): Promise<AccountCreatedPage> {
     const loginPage = new LoginPage(this.page);
     await loginPage.navigateToLogin();
-    await loginPage.fillAndSubmitSignupForm(user);
+    await loginPage.fillAndSubmitSignupForm(user.name, user.email);
 
     const signupPage = new SignupPage(this.page);
     await signupPage.fillAndSubmit(user);

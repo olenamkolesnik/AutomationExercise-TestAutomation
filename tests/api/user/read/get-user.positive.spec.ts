@@ -1,7 +1,6 @@
-import { expect } from '@playwright/test';
+import { test, expect } from '../../../../src/common/fixtures/user-fixtures';
 import { assertUserDetailsResponse } from '../../../../src/api/assertions/assert-user-details-response';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { test } from '../../../../src/api/fixtures/user-fixtures';
 import { getUserResponseSchema } from '../../../../src/api/schemas/get-user.response.schema';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { expectUsersToBeEqual } from '../../../../src/api/assertions/assert-users-are-equal';

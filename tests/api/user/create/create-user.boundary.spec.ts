@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { boundaryUsers } from '../../../../src/api/data/user-boundaries';
-import { test, expect } from '../../../../src/api/fixtures/api';
+import { test, expect } from '../../../../src/common/fixtures/api';
 
 test.describe('Create User Boundary Tests', () => {
   const boundaryCases = [

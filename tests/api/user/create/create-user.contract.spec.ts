@@ -1,4 +1,4 @@
-import { test, expect } from '../../../../src/api/fixtures/api';
+import { test, expect } from '../../../../src/common/fixtures/api';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
 import { toFormPayload } from '../../../../src/api/utils/form-helper';

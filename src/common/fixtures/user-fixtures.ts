@@ -1,5 +1,5 @@
-import { buildUser } from '../data/user-factory';
-import { CreateUserRequest } from '../models/requests/create-user.request';
+import { buildUser } from '../../api/data/user-factory';
+import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 import { test as base } from './api';
 
 export const test = base.extend<{
