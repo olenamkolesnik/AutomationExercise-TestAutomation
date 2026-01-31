@@ -1,8 +1,9 @@
-import { test } from '../../../../src/api/fixtures/api';
+import { expect, test } from '../../../../src/common/fixtures/api';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { CreateUserRequest } from '../../../../src/api/models/requests/create-user.request';
 import { SignupFlow } from '../../../../src/ui/flows/signup.flow';
 import { AccountCreatedPageAssert } from '../../../../src/ui/assertions/account-created-page.assert';
+import { LoginPage } from '../../../../src/ui/pages/login-page';
 
 test.describe('Login Page - New user signup', () => {
   let user: CreateUserRequest;
@@ -23,4 +24,19 @@ test.describe('Login Page - New user signup', () => {
 
     await new AccountCreatedPageAssert(accountCreatedPage).successHeading();
   });
+
+  test('should show validation error for empty form signup', async ({
+      page,
+    }) => {
+      const loginPage = new LoginPage(page);
+      await loginPage.navigateToLogin();
+  
+      await loginPage.submitLoginForm();
+      const validation = await loginPage.getSignupEmailValidationState();
+  
+      expect(validation.isValid).toBe(false);
+      expect(validation.isMissing).toBe(true);
+      expect(validation.message.length).toBeGreaterThan(0);
+      expect(await loginPage.isAt()).toBe(true);
+    });    
 });
