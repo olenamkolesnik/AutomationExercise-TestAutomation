@@ -1,61 +1,48 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 import { BasePage } from './base-page';
 export class SignupPage extends BasePage {
-  readonly nameInput: Locator;
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly daysSelect: Locator;
-  readonly monthsSelect: Locator;
-  readonly yearsSelect: Locator;
-  readonly newsletterCheckbox: Locator;
-  readonly specialOffersCheckbox: Locator;
-  readonly firstNameInput: Locator;
-  readonly lastNameInput: Locator;
-  readonly companyInput: Locator;
-  readonly addressInput: Locator;
-  readonly address2Input: Locator;
-  readonly stateInput: Locator;
-  readonly cityInput: Locator;
-  readonly zipcodeInput: Locator;
-  readonly mobileNumberInput: Locator;
-  readonly createAccountButton: Locator;
-
-  constructor(page: Page) {
-    super(page);
-    this.nameInput = this.page.locator('input[name="name"]');
-    this.emailInput = this.page.locator('input[name="email"]');
-    this.passwordInput = this.page.getByRole('textbox', { name: 'Password *' });
-    this.daysSelect = this.page.locator('#days');
-    this.monthsSelect = this.page.locator('#months');
-    this.yearsSelect = this.page.locator('#years');
-    this.newsletterCheckbox = this.page.getByRole('checkbox', {
+  private readonly nameInput = this.page.locator('input[name="name"]');
+  private readonly emailInput = this.page.locator('input[name="email"]');
+  private readonly passwordInput = this.page.getByRole('textbox', { name: 'Password *' });
+  private readonly daysSelect = this.page.locator('#days');
+private readonly monthsSelect = this.page.locator('#months');
+    private readonly yearsSelect = this.page.locator('#years');
+    private readonly newsletterCheckbox = this.page.getByRole('checkbox', {
       name: 'Sign up for our newsletter!',
     });
-    this.specialOffersCheckbox = this.page.getByRole('checkbox', {
+    private readonly specialOffersCheckbox = this.page.getByRole('checkbox', {
       name: 'Receive special offers from',
     });
-    this.firstNameInput = this.page.getByRole('textbox', {
+    private readonly firstNameInput = this.page.getByRole('textbox', {
       name: 'First name *',
     });
-    this.lastNameInput = this.page.getByRole('textbox', {
+    private readonly lastNameInput = this.page.getByRole('textbox', {
       name: 'Last name *',
     });
-    this.companyInput = this.page.getByRole('textbox', {
+    private readonly companyInput = this.page.getByRole('textbox', {
       name: 'Company',
       exact: true,
     });
-    this.addressInput = this.page.locator('input[name="address1"]');
-    this.address2Input = this.page.getByRole('textbox', { name: 'Address 2' });
-    this.stateInput = this.page.getByRole('textbox', { name: 'State *' });
-    this.cityInput = this.page.locator('input[name="city"]');
-    this.zipcodeInput = this.page.locator('#zipcode');
-    this.mobileNumberInput = this.page.getByRole('textbox', {
+    private readonly addressInput = this.page.locator('input[name="address1"]');
+    private readonly address2Input = this.page.getByRole('textbox', { name: 'Address 2' });
+    private readonly stateInput = this.page.getByRole('textbox', { name: 'State *' });
+    private readonly cityInput = this.page.locator('input[name="city"]');
+    private readonly zipcodeInput = this.page.locator('#zipcode');
+    private readonly mobileNumberInput = this.page.getByRole('textbox', {
       name: 'Mobile Number *',
     });
-    this.createAccountButton = this.page.getByRole('button', {
+    private readonly createAccountButton = this.page.getByRole('button', {
       name: 'Create Account',
     });
+
+  constructor(page: Page) {
+    super(page);    
+  }
+
+  async expectOpened() {
+    await expect(this.page).toHaveURL(/\/signup/);
+    await expect(this.createAccountButton).toBeVisible();
   }
 
   async fillAndSubmit(user: CreateUserRequest) {

@@ -12,7 +12,6 @@ export class LoginFlow {
     await loginPage.fillAndSubmitLoginForm(user.email, user.password);
 
     const homePage = new HomePage(this.page);
-    await homePage.waitForLogoutLinkVisible();
     return homePage;
   }
 }

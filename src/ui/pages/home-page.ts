@@ -1,19 +1,20 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { BasePage } from './base-page';
 
 export class HomePage extends BasePage {
-  
-  readonly logoutLink: Locator;
+  private readonly loggedInBanner = (userName: string) =>
+    this.page.getByText(`Logged in as ${userName}`);
+  private readonly logoutLink = this.page.getByRole('link', { name: 'Logout' });
 
   constructor(page: Page) {
     super(page);
-    this.logoutLink = page.getByRole('link', { name: 'Logout' });
-  }
-  loggedInAsText(userName: string): Locator {
-      return this.page.getByText(`Logged in as ${userName}`);
   }
 
-  async waitForLogoutLinkVisible() {
-  await this.logoutLink.waitFor({ state: 'visible' });
-}
+  async expectLoggedInAs(userName: string) {
+    await expect(this.loggedInBanner(userName)).toBeVisible();
+  }
+
+  async expectLogoutVisible() {
+    await expect(this.logoutLink).toBeVisible();
+  }
 }

@@ -1,6 +1,5 @@
-import { expect, test } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user-fixtures';
 import { LoginFlow } from '../../../../src/ui/flows/login.flow';
-import { HomePageAssert } from '../../../../src/ui/assertions/home-page.assert';
 import { LoginPage } from '../../../../src/ui/pages/login-page';
 
 test.describe('Login Page - login to account', () => {
@@ -11,7 +10,8 @@ test.describe('Login Page - login to account', () => {
     const flow = new LoginFlow(page);
     const homePage = await flow.loginUser(testUser);
 
-    await new HomePageAssert(homePage).isLoggedIn(testUser.name);
+    await homePage.expectLoggedInAs(testUser.name);
+    await homePage.expectLogoutVisible();
   });
 
   test('should show validation error for empty form submission', async ({
@@ -21,12 +21,7 @@ test.describe('Login Page - login to account', () => {
     await loginPage.navigateToLogin();
 
     await loginPage.submitLoginForm();
-    const validation = await loginPage.getLoginEmailValidationState();
-
-    expect(validation.isValid).toBe(false);
-    expect(validation.isMissing).toBe(true);
-    expect(validation.message.length).toBeGreaterThan(0);
-    expect(await loginPage.isAt()).toBe(true);
+    await loginPage.expectLoginSubmissionBlocked();
   });
 
   test('should show error message for invalid credentials', async ({
@@ -37,7 +32,7 @@ test.describe('Login Page - login to account', () => {
     await loginPage.navigateToLogin();
     await loginPage.fillAndSubmitLoginForm(testUser.email, 'wrongpassword');
 
-    expect(await loginPage.hasInvalidCredentialsError()).toBe(true);
+    await loginPage.expectInvalidCredentialsError();
   });
 
   /*UI – Login

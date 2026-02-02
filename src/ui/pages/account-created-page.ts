@@ -1,11 +1,9 @@
-import { type Locator, type Page } from '@playwright/test';
-export class AccountCreatedPage {
-  readonly page: Page;
-  accountCreatedHeading: Locator;
+import { type Page } from '@playwright/test';
+import { BasePage } from './base-page';
+export class AccountCreatedPage extends BasePage{
+  private readonly accountCreatedHeading = this.page.getByRole('heading', { name: 'Account Created!' })
 
   constructor(page: Page) {
-    this.page = page;
-
-    this.accountCreatedHeading = this.page.getByRole('heading', { name: 'Account Created!' })
+    super(page);
   }
 }
