@@ -20,8 +20,12 @@ export class LoginPage extends BasePage {
   private readonly signupButton = this.signupForm.getByRole('button', {
     name: 'Signup',
   });
-  private readonly invalidCredentialsError = this.loginForm.getByText(
+  private readonly emailOrPasswordIncorrectError = this.loginForm.getByText(
     'Your email or password is incorrect!',
+  );
+
+  private readonly emailAddressAlreadyExistsError = this.signupForm.getByText(
+    'Email Address already exist!',
   );
 
   constructor(page: Page) {
@@ -56,9 +60,14 @@ export class LoginPage extends BasePage {
     await this.signupButton.click();
   }
 
-  async expectInvalidCredentialsError() {
-    await expect(this.invalidCredentialsError).toBeVisible();
+  async expectEmailOrPasswordIncorrectError() {
+    await expect(this.emailOrPasswordIncorrectError).toBeVisible();
   }
+
+  async expectEmailAddressAlreadyExistsError() {
+    await expect(this.emailAddressAlreadyExistsError).toBeVisible();
+  }
+  
   async expectOpened() {
     await expect(this.page).toHaveURL(/\/login/);
     await expect(this.loginForm).toBeVisible();

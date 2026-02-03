@@ -5,4 +5,8 @@ export const API_ENDPOINTS = {
     UPDATE: '/api/updateAccount',
     DELETE: '/api/deleteAccount',
   },
+  AUTH: {
+  LOGIN: '/login',
+  LOGOUT: '/logout',
+  }
 };
