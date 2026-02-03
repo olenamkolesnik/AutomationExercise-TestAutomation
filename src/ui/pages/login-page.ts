@@ -50,7 +50,11 @@ export class LoginPage extends BasePage {
 
   async submitLoginForm() {
     await this.loginButton.click();
-  } 
+  }
+
+  async submitSignupForm() {
+    await this.signupButton.click();
+  }
 
   async expectInvalidCredentialsError() {
     await expect(this.invalidCredentialsError).toBeVisible();
@@ -62,8 +66,12 @@ export class LoginPage extends BasePage {
   }
 
   async expectLoginSubmissionBlocked() {
-  await expect(this.loginForm).toBeVisible();
-  await expect(this.page).toHaveURL(/\/login/);
-}
+    await expect(this.loginForm).toBeVisible();
+    await expect(this.page).toHaveURL(/\/login/);
+  }
 
+  async expectSignupSubmissionBlocked() {
+    await expect(this.signupForm).toBeVisible();
+    await expect(this.page).toHaveURL(/\/login/);
+  }
 }

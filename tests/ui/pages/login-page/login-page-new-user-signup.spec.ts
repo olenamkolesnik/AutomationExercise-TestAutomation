@@ -1,19 +1,19 @@
-import { expect, test } from '../../../../src/common/fixtures/api';
+import { test } from '../../../../src/common/fixtures/api';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { CreateUserRequest } from '../../../../src/api/models/requests/create-user.request';
 import { SignupFlow } from '../../../../src/ui/flows/signup.flow';
-import { AccountCreatedPageAssert } from '../../../../src/ui/assertions/account-created-page.assert';
 import { LoginPage } from '../../../../src/ui/pages/login-page';
 
 test.describe('Login Page - New user signup', () => {
-  let user: CreateUserRequest;
+  let user: CreateUserRequest, isUserCreated = false;
 
   test.beforeEach(async () => {
     user = buildUser();
+    isUserCreated = true;
   });
 
-  test.afterEach(async ({ userClient }, testInfo) => {
-    if (testInfo.status !== 'skipped') {
+  test.afterEach(async ({ userClient }, ) => {
+    if (isUserCreated) {
       await userClient.deleteUserByEmailAndPassword(user.email, user.password);
     }
   });
@@ -22,7 +22,7 @@ test.describe('Login Page - New user signup', () => {
     const flow = new SignupFlow(page);
     const accountCreatedPage = await flow.createNewUser(user);
 
-    await new AccountCreatedPageAssert(accountCreatedPage).successHeading();
+    await accountCreatedPage.expectAccountCreated();
   });
 
   test('should show validation error for empty form signup', async ({
@@ -31,12 +31,7 @@ test.describe('Login Page - New user signup', () => {
       const loginPage = new LoginPage(page);
       await loginPage.navigateToLogin();
   
-      await loginPage.submitLoginForm();
-      const validation = await loginPage.getSignupEmailValidationState();
-  
-      expect(validation.isValid).toBe(false);
-      expect(validation.isMissing).toBe(true);
-      expect(validation.message.length).toBeGreaterThan(0);
-      expect(await loginPage.isAt()).toBe(true);
+      await loginPage.submitSignupForm();
+      await loginPage.expectSignupSubmissionBlocked();
     });    
 });
