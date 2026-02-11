@@ -13,6 +13,6 @@ export class AddToCartFlow {
     await this.productsPage.addProductToCartByName(productName);
     await this.productsPage.viewCart();
 
-    await this.cartPage.expectOpened();
+    await this.cartPage.expectPageOpened();
   }
 }

@@ -1,4 +1,4 @@
-import { test } from '../../../../src/common/fixtures/products-fixture';
+import { test } from '../../../../src/common/fixtures/products.fixture';
 import { assertCartItem } from '../../../../src/ui/assertions/assert-cart-item';
 import { AddToCartFlow } from '../../../../src/ui/flows/add-to-cart.flow';
 import { CartPage } from '../../../../src/ui/pages/cart-page';
@@ -12,7 +12,7 @@ test.describe('Products Page - add to a cart as user', () => {
     ).addProduct(product.name);
 
     const cartPage = new CartPage(page);
-    const uiItem = await cartPage.getCartItemByName(product.name);
+    const uiItem = await(await cartPage.getCartItemByName(product.name)).getData();
     assertCartItem(uiItem, product, 1);
   });
 });
