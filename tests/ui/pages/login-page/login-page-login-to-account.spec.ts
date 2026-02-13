@@ -1,4 +1,4 @@
-import { test } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { LoginFlow } from '../../../../src/ui/flows/login.flow';
 import { LoginPage } from '../../../../src/ui/pages/login-page';
 

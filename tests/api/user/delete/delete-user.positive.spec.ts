@@ -1,4 +1,4 @@
-import { test, expect } from '../../../../src/common/fixtures/user-fixtures';
+import { test, expect } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';

@@ -1,4 +1,4 @@
-import { test } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { CreateUserRequest } from '../../../../src/api/models/requests/create-user.request';
 import { SignupFlow } from '../../../../src/ui/flows/signup.flow';
