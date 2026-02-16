@@ -1,5 +1,4 @@
-import { test as base } from '@playwright/test';
-import ProductsClient from '../../api/clients/products-client';
+import { test as base } from './api-clients.fixture';
 import { ProductDto } from '../../api/models/dto/product-dto';
 import { assertProductsListDto } from '../../api/models/guards/productsList.guard';
 import { parsePrice } from '../../common/utils/price-parser';
@@ -8,9 +7,8 @@ import { Product } from '../../ui/models/product.model';
 export const test = base.extend<{
   product: Product;
 }>({
-  product: async ({ request }, use) => {
-    const productsClient = new ProductsClient(request);
-    const response = await productsClient.getProductsList();
+  product: async ({ productClient }, use) => {
+    const response = await productClient.getProductsList();
 
     assertProductsListDto(response.data);
 
@@ -28,5 +26,3 @@ export const test = base.extend<{
     await use(product);
   },
 });
-
-export const expect = base.expect;

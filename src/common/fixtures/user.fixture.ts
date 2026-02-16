@@ -1,6 +1,6 @@
 import { buildUser } from '../../api/data/user-factory';
 import { CreateUserRequest } from '../../api/models/requests/create-user.request';
-import { test as base } from './api';
+import { test as base } from './api-clients.fixture';
 
 export const test = base.extend<{
   testUser: CreateUserRequest;
@@ -13,5 +13,3 @@ export const test = base.extend<{
     await userClient.deleteUserByEmailAndPassword(user.email, user.password);
   },
 });
-
-export { expect } from '@playwright/test';
