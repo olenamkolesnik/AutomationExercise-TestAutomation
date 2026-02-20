@@ -37,19 +37,14 @@ export class LoginPage extends BasePage {
     await this.expectOpened();
   }
 
-  async fillAndSubmitSignupForm(name: string, email: string) {
+  async fillSignupForm(name: string, email: string) {
     await this.nameInputSignupForm.fill(name);
     await this.emailInputSignupForm.fill(email);
-    await Promise.all([
-      this.page.waitForURL(/\/signup/),
-      this.signupButton.click(),
-    ]);
   }
 
-  async fillAndSubmitLoginForm(email: string, password: string) {
+  async fillLoginForm(email: string, password: string) {
     await this.emailInputLoginForm.fill(email);
     await this.passwordInputLoginForm.fill(password);
-    await this.submitLoginForm();
   }
 
   async submitLoginForm() {

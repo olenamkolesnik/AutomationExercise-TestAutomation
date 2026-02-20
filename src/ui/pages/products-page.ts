@@ -25,10 +25,12 @@ export class ProductsPage extends BasePage {
 
   async addProductToCartByName(productName: string) {
     const card = this.productCards.filter({ hasText: productName });
+    await card.scrollIntoViewIfNeeded();
 
     await card.hover();
 
-    await card.locator('.product-overlay a.add-to-cart').click();
+    const addToCartButton = card.locator('.product-overlay a.add-to-cart');
+    await addToCartButton.click();
   }
 
   async viewCart() {

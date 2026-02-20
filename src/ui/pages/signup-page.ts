@@ -51,7 +51,7 @@ export class SignupPage extends BasePage {
     await expect(this.createAccountButton).toBeVisible();
   }
 
-  async fillAndSubmit(user: CreateUserRequest) {
+  async fillSignupForm(user: CreateUserRequest) {
     await this.page.getByRole('radio', { name: `${user.title}.` }).check();
     await this.passwordInput.fill(user.password);
     await this.daysSelect.selectOption(user.birth_date.toString());
@@ -68,6 +68,9 @@ export class SignupPage extends BasePage {
     await this.cityInput.fill(user.city);
     await this.zipcodeInput.fill(user.zipcode);
     await this.mobileNumberInput.fill(user.mobile_number);
+  }
+
+  async submitSignupForm() {
     await Promise.all([
       this.page.waitForURL(/\/account_created/),
       this.createAccountButton.click(),

@@ -4,6 +4,10 @@ import { CartPage } from '../../ui/pages/cart-page';
 import { CheckoutPage } from '../../ui/pages/checkout-page';
 import { PaymentPage } from '../../ui/pages/payment-page';
 import { PaymentDonePage } from '../../ui/pages/payment-done-page';
+import {LoginPage} from '../../ui/pages/login-page';
+import {HomePage} from '../../ui/pages/home-page';
+import { AccountCreatedPage } from '../../ui/pages/account-created-page';
+import { SignupPage } from '../../ui/pages/signup-page';
 
 type UiPageFixtures = {
   productsPage: ProductsPage;
@@ -11,6 +15,10 @@ type UiPageFixtures = {
   checkoutPage: CheckoutPage;
   paymentPage: PaymentPage;
   paymentDonePage: PaymentDonePage;
+  loginPage: LoginPage;
+  homePage: HomePage;
+  signupPage: SignupPage;
+  accountCreatedPage: AccountCreatedPage;
 };
 
 export const test = base.extend<UiPageFixtures>({
@@ -32,5 +40,21 @@ export const test = base.extend<UiPageFixtures>({
 
   paymentDonePage: async ({ authPage }, use) => {
     await use(new PaymentDonePage(authPage));
+  },
+
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
+  },
+
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+
+  signupPage: async ({ page }, use) => {
+    await use(new SignupPage(page));
+  },
+
+  accountCreatedPage: async ({ page }, use) => {
+    await use(new AccountCreatedPage(page));
   },
 });
