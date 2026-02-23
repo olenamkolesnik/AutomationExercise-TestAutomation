@@ -1,8 +1,9 @@
-import { test, expect } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { buildUpdateAccountData } from '../../../../src/api/data/update-user-factory';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
+import { expect } from '@playwright/test';
 
 test.describe('API: Update User - Negative', () => {
   test('Should fail when email is missing', async ({ userClient, testUser }) => {

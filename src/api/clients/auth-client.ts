@@ -51,7 +51,6 @@ export default class AuthClient {
   }
 
   private async getCsrfToken(): Promise<string> {
-    // const response =
     await this.request.get('/login', {
       headers: {
         Referer: `${process.env.BASE_URL}/login`,
@@ -62,15 +61,5 @@ export default class AuthClient {
     const csrf = cookies.cookies.find((c) => c.name === 'csrftoken');
     if (!csrf) throw new Error('CSRF token not found');
     return csrf.value;
-    /*
-
-    const cookies = response.headers()['set-cookie'];
-    const match = cookies?.match(/csrftoken=([^;]+)/);
-
-    if (!match) {
-      throw new Error('CSRF token not found');
-    }
-
-    return match[1];*/
   }
 }

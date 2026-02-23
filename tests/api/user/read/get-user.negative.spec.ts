@@ -1,14 +1,14 @@
-import { test, expect } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
-import { buildUser } from '../../../../src/api/data/user-factory';
+import { expect } from '@playwright/test';
 
 test.describe('API: Get User Detail By Email — Negative', () => {
   test('Should return 404 for unregistered email', async ({ userClient }) => {
-    const nonExistingUser = buildUser();
+    const email = 'nonexistent.user.' + Date.now() + '@example.com';
+    const response = await userClient.getUserByEmail(email);
 
-    const response = await userClient.getUserByEmail(nonExistingUser.email);
     expectSchema(response, commonResponseSchema);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain(
@@ -20,9 +20,14 @@ test.describe('API: Get User Detail By Email — Negative', () => {
   test('Should return error when email query parameter is missing', async ({
     userClient,
   }) => {
-    const response = await userClient.getUserByEmail(undefined as unknown as string);
+    const response = await userClient.getUserByEmail(
+      undefined as unknown as string,
+    );
+
     expectSchema(response, commonResponseSchema);
-    expect(response.responseCode).toBeGreaterThanOrEqual(HTTP_STATUS.BAD_REQUEST);
+    expect(response.responseCode).toBeGreaterThanOrEqual(
+      HTTP_STATUS.BAD_REQUEST,
+    );
     expect(response.message).toContain(
       'Bad request, email parameter is missing in GET request.',
     );
@@ -55,12 +60,13 @@ test.describe('API: Get User Detail By Email — Negative', () => {
     expect(response.data).toBeNull();
   });
 
-  test('Should handle injection-like input safely', async ({
-    userClient,
-  }) => {
+  test('Should handle injection-like input safely', async ({ userClient }) => {
     const response = await userClient.getUserByEmail(`' OR 1=1 --`);
+
     expectSchema(response, commonResponseSchema);
-    expect(response.responseCode).toBeGreaterThanOrEqual(HTTP_STATUS.BAD_REQUEST);
+    expect(response.responseCode).toBeGreaterThanOrEqual(
+      HTTP_STATUS.BAD_REQUEST,
+    );
     expect(response.message).toBeTruthy();
     expect(response.data).toBeNull();
   });
@@ -72,7 +78,9 @@ test.describe('API: Get User Detail By Email — Negative', () => {
 
     const response = await userClient.getUserByEmail(longEmail);
     expectSchema(response, commonResponseSchema);
-    expect(response.responseCode).toBeGreaterThanOrEqual(HTTP_STATUS.BAD_REQUEST);
+    expect(response.responseCode).toBeGreaterThanOrEqual(
+      HTTP_STATUS.BAD_REQUEST,
+    );
     expect(response.message).toBeTruthy();
     expect(response.data).toBeNull();
   });

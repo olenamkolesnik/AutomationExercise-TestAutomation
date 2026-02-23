@@ -1,10 +1,11 @@
-import { test, expect } from '../../../../src/common/fixtures/user-fixtures';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { buildUpdateAccountData } from '../../../../src/api/data/update-user-factory';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 import { expectUsersToBeEqual } from '../../../../src/api/assertions/assert-users-are-equal';
 import { UserDetailsResponse } from '../../../../src/api/models/responses/user-details.response';
+import { expect } from '@playwright/test';
 
 test.describe('API: Update Account Positive Tests - Positive', () => {
   test('Update all updatable fields with valid data', async ({
@@ -31,6 +32,7 @@ test.describe('API: Update Account Positive Tests - Positive', () => {
     });
 
     const response = await userClient.updateUser(updatedUser);
+    
     expectSchema(response, commonResponseSchema);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBe('User updated!');

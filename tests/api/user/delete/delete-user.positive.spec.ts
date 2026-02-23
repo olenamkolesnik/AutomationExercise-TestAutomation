@@ -1,7 +1,8 @@
-import { test, expect } from '../../../../src/common/fixtures/user.fixture';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
 import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
+import { expect } from '@playwright/test';
 
 test.describe('API: Delete Account - Positive', () => {
   test('should delete account successfully with valid credentials', async ({
