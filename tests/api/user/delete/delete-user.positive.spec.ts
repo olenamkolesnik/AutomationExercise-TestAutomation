@@ -9,10 +9,10 @@ test.describe('API: Delete Account - Positive', () => {
     userClient,
     testUser,
   }) => {
-    const response = await userClient.deleteUserByEmailAndPassword(
-      testUser.email,
-      testUser.password,
-    );
+    const response = await userClient.deleteUser({
+      email: testUser.email,
+      password: testUser.password,
+    });
     expectSchema(response, commonResponseSchema);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBe('Account deleted!');

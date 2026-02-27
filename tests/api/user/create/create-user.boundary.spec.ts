@@ -22,10 +22,10 @@ test.describe('Create User Boundary Tests', () => {
         expect(response.responseCode).toBe(HTTP_STATUS.CREATED);
         expect(response.message).toContain('User created');
       } finally {
-        await userClient.deleteUserByEmailAndPassword(
-          caseData.user.email,
-          caseData.user.password,
-        );
+        await userClient.deleteUser({
+          email: caseData.user.email,
+          password: caseData.user.password,
+        });
       }
     });
   }

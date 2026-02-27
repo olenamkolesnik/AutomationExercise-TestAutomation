@@ -1,4 +1,4 @@
-import { test} from '../../../../src/common/fixtures/api-clients.fixture';
+import { test } from '../../../../src/common/fixtures/api-clients.fixture';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/utils/schemaValidator';
@@ -14,7 +14,10 @@ test.describe('Create User Positive Tests', () => {
     testUser = buildUser();
   });
   test.afterEach(async ({ userClient }) => {
-    await userClient.deleteUserByEmailAndPassword(testUser.email, testUser.password);
+    await userClient.deleteUser({
+      email: testUser.email,
+      password: testUser.password,
+    });
   });
 
   test('Should create user with valid required data', async ({

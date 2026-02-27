@@ -16,10 +16,10 @@ test.describe('Create User Negative Tests', () => {
       expect(response.message).toContain('Email already exists');
       expect(response.data).toBeNull();
     } finally {
-      await userClient.deleteUserByEmailAndPassword(
-        testUser.email,
-        testUser.password,
-      );
+      await userClient.deleteUser({
+        email: testUser.email,
+        password: testUser.password,
+      });
     }
   });
 
@@ -34,10 +34,10 @@ test.describe('Create User Negative Tests', () => {
           expect(response.message).toContain(field);
           expect(response.data).toBeNull();
         } finally {
-          await userClient.deleteUserByEmailAndPassword(
-            testUser.email,
-            testUser.password,
-          );
+          await userClient.deleteUser({
+            email: testUser.email,
+            password: testUser.password,
+          });
         }
       });
     });

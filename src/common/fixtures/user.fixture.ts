@@ -10,6 +10,6 @@ export const test = base.extend<{
 
     await userClient.createUser(user);
     await use(user);
-    await userClient.deleteUserByEmailAndPassword(user.email, user.password);
+    await userClient.deleteUser(user.email, user.password);
   },
 });

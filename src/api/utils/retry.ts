@@ -1,62 +1,84 @@
 import { logger } from '../../common/utils/logger';
-import type { APIResponse } from '@playwright/test';
 
-export type RetryPredicate = (error: unknown, response?: APIResponse | null) => boolean;
+export type RetryPredicate<T> = (
+  error: unknown | null,
+  result: T | null,
+) => boolean;
 
 export async function retry<T>(
   fn: () => Promise<T>,
   attempts: number = 3,
   delayMs: number = 500,
-  backoff: number = 1,
-  shouldRetry?: RetryPredicate
+  backoff: number = 2,
+  shouldRetry?: RetryPredicate<T>,
 ): Promise<T> {
-  let lastError: unknown = null;
+  let lastError: unknown;
   let currentDelay = delayMs;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       logger.debug(`Retry attempt ${attempt}/${attempts}`);
+
       const result = await fn();
-      // If caller provided a predicate, let them decide if we should treat result as retryable.
-      if (shouldRetry) {
-        const retry = shouldRetry(undefined, (result as unknown) as APIResponse);
-        if (retry) {
-          throw new Error('Predicate signaled retry required after result');
-        }
+
+      // Allow caller to decide based on result
+      if (shouldRetry && shouldRetry(null, result)) {
+        throw new RetryableResultError(result);
       }
+
       return result;
     } catch (err) {
       lastError = err;
-      // If last attempt, throw
+
       if (attempt === attempts) {
-        logger.error(`Retry operation failed after ${attempts} attempts, finalAttempt: ${attempt}, err: ${String(err)}`);
-        throw lastError;
+        logger.error(
+          `Retry failed after ${attempts} attempts. Error: ${String(err)}`,
+        );
+        throw unwrapRetryError(err);
       }
-      // Determine retryability:
-      const retryAllowed = isRetryableError(err);
+
+      const retryAllowed =
+        err instanceof RetryableResultError ||
+        isRetryableTransportError(err);
+
       if (!retryAllowed) {
-        logger.error(`Non-retryable error encountered, aborting retries',  err: ${String(err)}`);
-        throw err;
+        logger.error(`Non-retryable error: ${String(err)}`);
+        throw unwrapRetryError(err);
       }
-      logger.warn(`Attempt ${attempt} failed, retrying after ${currentDelay}ms,  err: ${String(err)}`);
-      await new Promise(res => setTimeout(res, currentDelay));
+
+      logger.warn(
+        `Attempt ${attempt} failed. Retrying in ${currentDelay}ms...`,
+      );
+
+      await new Promise((res) => setTimeout(res, currentDelay));
       currentDelay *= backoff;
     }
   }
-  throw lastError ?? new Error('Retry failed with unknown reason');
+
+  throw lastError ?? new Error('Retry failed unexpectedly');
 }
 
-function isRetryableError(err: unknown): boolean {
-  // Playwright network errors and HTTP 5xx are retryable.
-  // For network-level, Playwright may throw its own error. We check string message.
-  const msg = String(err || '').toLowerCase();
-  if (msg.includes('ecxr') || msg.includes('net::') || msg.includes('timeout') || msg.includes('socket')) {
-    return true;
+class RetryableResultError<T = unknown> extends Error {
+  constructor(public readonly result: T) {
+    super('Retryable result');
   }
-  // If caller passed APIResponse via thrown error containing status, handle below:
-  if (err && typeof err === 'object' && 'status' in err) {
-    const status = (err as { status?: unknown }).status;
-    if (typeof status === 'number' && status >= 500) return true;
+}
+
+function unwrapRetryError(error: unknown) {
+  if (error instanceof RetryableResultError) {
+    return error.result;
   }
-  return false;
+  return error;
+}
+
+function isRetryableTransportError(err: unknown): boolean {
+  const message = String(err || '').toLowerCase();
+
+  return (
+    message.includes('net::') ||
+    message.includes('timeout') ||
+    message.includes('socket') ||
+    message.includes('econnreset') ||
+    message.includes('econnrefused')
+  );
 }

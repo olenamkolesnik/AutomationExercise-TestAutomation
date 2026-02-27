@@ -1,4 +1,4 @@
-import { APIRequestContext } from '@playwright/test';
+import { APIRequestContext, APIResponse } from '@playwright/test';
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
@@ -9,19 +9,26 @@ import { ApiResponse } from '../models/api-response';
 import { commonResponse } from '../models/responses/common.response';
 import { UserDetailsResponse } from '../models/responses/user-details.response';
 import { UpdateUserRequest } from '../models/requests/update-user.request';
+import { DeleteUserRequest } from '../models/requests/delete-user.request';
 
 export default class UserClient {
-  private readonly defaultFormHeaders = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-  };
+  constructor(private request: APIRequestContext) {}
 
-  constructor(private request: APIRequestContext) {
-    logger.debug('UserClient initialized');
-  }
+ private async performRequest(
+  fn: () => Promise<APIResponse>,
+): Promise<APIResponse> {
+  return retry(
+    fn,
+    3,
+    500,
+    2,
+    (_, response) => {
+      if (!response) return false;
 
-  private async performRequest<T>(fn: () => Promise<T>) {
-    return retry(fn, 3, 500, 2);
-  }
+      return response.status() >= 500;
+    },
+  );
+}
 
   async createUser(
     user: CreateUserRequest,
@@ -32,7 +39,6 @@ export default class UserClient {
 
     const response = await this.performRequest(() =>
       this.request.post(API_ENDPOINTS.USER.CREATE, {
-        headers: this.defaultFormHeaders,
         form: userPayload,
       }),
     );
@@ -40,16 +46,14 @@ export default class UserClient {
     return wrapResponse(response);
   }
 
-  async deleteUserByEmailAndPassword(
-    email: string,
-    password?: string,
+  async deleteUser(
+   credentials: DeleteUserRequest
   ): Promise<ApiResponse<commonResponse>> {
-    logger.info(`Delete user attempt: ${email}`);
+    logger.info(`Delete user attempt for: ${credentials.email}`);
 
     const response = await this.performRequest(() =>
       this.request.delete(API_ENDPOINTS.USER.DELETE, {
-        headers: this.defaultFormHeaders,
-        form: password ? { email, password } : { email },
+        form: toFormPayload(credentials),
       }),
     );
 
@@ -63,7 +67,6 @@ export default class UserClient {
 
     const response = await this.performRequest(() =>
       this.request.get(API_ENDPOINTS.USER.GET, {
-        headers: this.defaultFormHeaders,
         params: { email },
       }),
     );
@@ -80,7 +83,6 @@ export default class UserClient {
 
     const response = await this.performRequest(() =>
       this.request.put(API_ENDPOINTS.USER.UPDATE, {
-        headers: this.defaultFormHeaders,
         form: userPayload,
       }),
     );
