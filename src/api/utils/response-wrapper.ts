@@ -1,5 +1,5 @@
 import { APIResponse } from '@playwright/test';
-import { ApiResponse } from '../models/api-response';
+import { ApiResponse } from '../contracts/api-response';
 import { logger } from '../../common/utils/logger';
 import type { JsonValue } from '../../common/types/json-type';
 
@@ -9,7 +9,7 @@ type RawApiResponse = {
   [key: string]: JsonValue | undefined;
 };
 
-export async function wrapResponse<T extends JsonValue>(
+export async function wrapResponse<T>(
   response: APIResponse
 ): Promise<ApiResponse<T>> {
   const rawText = await response.text();
@@ -44,11 +44,15 @@ export async function wrapResponse<T extends JsonValue>(
 
   let data: T | null = null;
 
-  if (payloadEntries.length === 1) {
-    data = payloadEntries[0][1] as T;
-  } else if (payloadEntries.length > 1) {
-    data = rest as T;
-  }
+if (payloadEntries.length === 1) {
+  data = payloadEntries[0][1] as T;
+} else if (payloadEntries.length > 1) {
+  throw new Error(
+    `Ambiguous payload: multiple keys found: ${payloadEntries
+      .map(([k]) => k)
+      .join(', ')}`
+  );
+}
 
   logger.debug('API response processed', {
     httpStatus: response.status(),

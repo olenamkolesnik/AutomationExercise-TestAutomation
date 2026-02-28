@@ -4,12 +4,12 @@ import { API_ENDPOINTS } from '../constants/endpoints';
 import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { toFormPayload } from '../utils/form-helper';
-import { CreateUserRequest } from '../models/requests/create-user.request';
-import { ApiResponse } from '../models/api-response';
-import { commonResponse } from '../models/responses/common.response';
-import { UserDetailsResponse } from '../models/responses/user-details.response';
-import { UpdateUserRequest } from '../models/requests/update-user.request';
-import { DeleteUserRequest } from '../models/requests/delete-user.request';
+import { CreateUserRequest } from '../contracts/requests/create-user.request';
+import { ApiResponse } from '../contracts/api-response';
+import { commonResponse } from '../contracts/responses/common.response';
+import { UserDetailsResponse } from '../contracts/responses/user-details.response';
+import { UpdateUserRequest } from '../contracts/requests/update-user.request';
+import { DeleteUserRequest } from '../contracts/requests/delete-user.request';
 
 export default class UserClient {
   constructor(private request: APIRequestContext) {}
@@ -62,7 +62,7 @@ export default class UserClient {
 
   async getUserByEmail(
     email: string,
-  ): Promise<ApiResponse<UserDetailsResponse | commonResponse>> {
+  ): Promise<ApiResponse<UserDetailsResponse>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -71,7 +71,7 @@ export default class UserClient {
       }),
     );
 
-    return wrapResponse<UserDetailsResponse | commonResponse>(response);
+    return wrapResponse<UserDetailsResponse>(response);
   }
 
   async updateUser(

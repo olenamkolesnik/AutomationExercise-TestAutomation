@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Product } from '../../ui/models/product.model';
+import { Product } from '../../common/models/product/product.model';
 import { CartItemUi } from '../models/cart-item.model';
 
 export function assertCartItem(
