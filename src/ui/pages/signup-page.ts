@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
-import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 import { BasePage } from './base-page';
+import { User } from '../../common/models/product/user.model';
 export class SignupPage extends BasePage {
   private readonly nameInput = this.page.locator('input[name="name"]');
   private readonly emailInput = this.page.locator('input[name="email"]');
@@ -51,23 +51,23 @@ export class SignupPage extends BasePage {
     await expect(this.createAccountButton).toBeVisible();
   }
 
-  async fillSignupForm(user: CreateUserRequest) {
+  async fillSignupForm(user: User) {
     await this.page.getByRole('radio', { name: `${user.title}.` }).check();
     await this.passwordInput.fill(user.password);
-    await this.daysSelect.selectOption(user.birth_date.toString());
-    await this.monthsSelect.selectOption(user.birth_month.toString());
-    await this.yearsSelect.selectOption(user.birth_year.toString());
+    await this.daysSelect.selectOption(user.birthDate.day.toString());
+    await this.monthsSelect.selectOption(user.birthDate.month.toString());
+    await this.yearsSelect.selectOption(user.birthDate.year.toString());
     await this.newsletterCheckbox.check();
     await this.specialOffersCheckbox.check();
-    await this.firstNameInput.fill(user.firstname);
-    await this.lastNameInput.fill(user.lastname);
-    await this.companyInput.fill(user.company);
-    await this.addressInput.fill(user.address1);
-    await this.address2Input.fill(user.address2);
-    await this.stateInput.fill(user.state);
-    await this.cityInput.fill(user.city);
-    await this.zipcodeInput.fill(user.zipcode);
-    await this.mobileNumberInput.fill(user.mobile_number);
+    await this.firstNameInput.fill(user.firstName);
+    await this.lastNameInput.fill(user.lastName);
+    await this.companyInput.fill(user.company?? '');
+    await this.addressInput.fill(user.address?.line1 ?? '');
+    await this.address2Input.fill(user.address?.line2 ?? '');
+    await this.stateInput.fill(user.address?.state ?? '');
+    await this.cityInput.fill(user.address?.city ?? '');
+    await this.zipcodeInput.fill(user.address?.zipCode ?? '');
+    await this.mobileNumberInput.fill(user.mobileNumber ?? '');
   }
 
   async submitSignupForm() {
