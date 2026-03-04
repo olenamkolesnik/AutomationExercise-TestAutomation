@@ -1,8 +1,8 @@
 import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 import { expect } from '@playwright/test';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 
 test.describe('API: Delete Account - Positive', () => {
   test('should delete account successfully with valid credentials', async ({
@@ -13,7 +13,8 @@ test.describe('API: Delete Account - Positive', () => {
       email: testUser.email,
       password: testUser.password,
     });
-    expectSchema(response, commonResponseSchema);
+
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBe('Account deleted!');
 

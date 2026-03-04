@@ -1,4 +1,4 @@
-import { CategoryDto } from '../../domain/user/category-dto';
+import { CategoryDto } from './category.dto';
 
 export interface ProductDto {
   readonly id: number;

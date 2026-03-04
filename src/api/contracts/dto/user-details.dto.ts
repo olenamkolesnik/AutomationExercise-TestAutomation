@@ -1,5 +1,4 @@
-import type { JsonObject } from '../../../common/types/json-type';
-export interface UserDetailsResponse extends JsonObject {
+export interface UserDetailsDto{
   id: number;
   name: string;
   email: string;

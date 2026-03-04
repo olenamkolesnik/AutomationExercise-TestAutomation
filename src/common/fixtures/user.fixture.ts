@@ -1,15 +1,16 @@
 import { buildUser } from '../../api/data/user-factory';
-import { CreateUserRequest } from '../../api/models/requests/create-user.request';
 import { test as base } from './api-clients.fixture';
+import { User } from '../models/product/user.model';
+import { mapToCreateUserDto } from '../../api/mappers/user.mapper';
 
 export const test = base.extend<{
-  testUser: CreateUserRequest;
+  testUser: User;
 }>({
   testUser: async ({ userClient }, use) => {
     const user = buildUser();
 
-    await userClient.createUser(user);
+    await userClient.createUser(mapToCreateUserDto(user));
     await use(user);
-    await userClient.deleteUser(user.email, user.password);
+    await userClient.deleteUser({ email: user.email, password: user.password });
   },
 });

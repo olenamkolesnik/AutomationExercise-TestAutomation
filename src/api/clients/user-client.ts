@@ -1,40 +1,25 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
+import { APIRequestContext } from '@playwright/test';
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import { retry } from '../utils/retry';
 import { wrapResponse } from '../utils/response-wrapper';
 import { toFormPayload } from '../utils/form-helper';
-import { CreateUserRequest } from '../contracts/requests/create-user.request';
 import { ApiResponse } from '../contracts/api-response';
-import { commonResponse } from '../contracts/responses/common.response';
-import { UserDetailsResponse } from '../contracts/responses/user-details.response';
-import { UpdateUserRequest } from '../contracts/requests/update-user.request';
-import { DeleteUserRequest } from '../contracts/requests/delete-user.request';
+import { CommonResponseDto } from '../contracts/dto/common-response.dto';
+import { UserDetailsDto } from '../contracts/dto/user-details.dto';
+import { UpdateUserDto } from '../contracts/dto/update-user.dto';
+import { DeleteUserDto } from '../contracts/dto/delete-user.dto';
+import { BaseApiClient } from './base-api.client';
+import { CreateUserDto } from '../contracts/dto/create-user.dto';
 
-export default class UserClient {
-  constructor(private request: APIRequestContext) {}
+export default class UserClient extends BaseApiClient {
+  constructor(request: APIRequestContext) {
+    super(request);
+  }
 
- private async performRequest(
-  fn: () => Promise<APIResponse>,
-): Promise<APIResponse> {
-  return retry(
-    fn,
-    3,
-    500,
-    2,
-    (_, response) => {
-      if (!response) return false;
-
-      return response.status() >= 500;
-    },
-  );
-}
-
-  async createUser(
-    user: CreateUserRequest,
-  ): Promise<ApiResponse<commonResponse>> {
+  async createUser(user: CreateUserDto): Promise<ApiResponse<CommonResponseDto>> {
     logger.info('Create user attempt');
 
+    
     const userPayload = toFormPayload(user);
 
     const response = await this.performRequest(() =>
@@ -47,8 +32,8 @@ export default class UserClient {
   }
 
   async deleteUser(
-   credentials: DeleteUserRequest
-  ): Promise<ApiResponse<commonResponse>> {
+    credentials: DeleteUserDto,
+  ): Promise<ApiResponse<CommonResponseDto>> {
     logger.info(`Delete user attempt for: ${credentials.email}`);
 
     const response = await this.performRequest(() =>
@@ -62,7 +47,7 @@ export default class UserClient {
 
   async getUserByEmail(
     email: string,
-  ): Promise<ApiResponse<UserDetailsResponse>> {
+  ): Promise<ApiResponse<UserDetailsDto>> {
     logger.info(`Get user attempt: ${email}`);
 
     const response = await this.performRequest(() =>
@@ -71,12 +56,12 @@ export default class UserClient {
       }),
     );
 
-    return wrapResponse<UserDetailsResponse>(response);
+    return wrapResponse<UserDetailsDto>(response);
   }
 
   async updateUser(
-    user: UpdateUserRequest,
-  ): Promise<ApiResponse<commonResponse>> {
+    user: UpdateUserDto,
+  ): Promise<ApiResponse<CommonResponseDto>> {
     logger.info('Update user attempt');
 
     const userPayload = toFormPayload(user);

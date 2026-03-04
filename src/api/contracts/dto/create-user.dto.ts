@@ -1,7 +1,6 @@
-import type { JsonObject } from '../../../common/types/json-type';
 import { Title } from '../../constants/titles';
 
-export interface UpdateUserRequest extends JsonObject {
+export interface CreateUserDto {
   title: Title;
   name: string;
   email: string;

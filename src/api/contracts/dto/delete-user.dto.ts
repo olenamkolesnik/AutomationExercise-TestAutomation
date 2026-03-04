@@ -1,4 +1,4 @@
-export interface DeleteUserRequest {
+export interface DeleteUserDto {
   email: string;
   password: string;
 }

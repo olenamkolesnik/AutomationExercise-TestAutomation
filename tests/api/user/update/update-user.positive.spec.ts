@@ -1,45 +1,33 @@
 import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { buildUpdateAccountData } from '../../../../src/api/data/update-user-factory';
-import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
-import { expectUsersToBeEqual } from '../../../../src/api/assertions/assert-users-are-equal';
-import { UserDetailsResponse } from '../../../../src/api/models/responses/user-details.response';
 import { expect } from '@playwright/test';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { UserDetailsDto } from '../../../../src/api/contracts/dto/user-details.dto';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { mapToDomainUser, mapToUpdateUserDto } from '../../../../src/api/mappers/user.mapper';
+import { buildUser } from '../../../../src/api/data/user-factory';
 
 test.describe('API: Update Account Positive Tests - Positive', () => {
   test('Update all updatable fields with valid data', async ({
     userClient,
     testUser,
   }) => {
-    const updatedUser = buildUpdateAccountData({
-      name: 'Updated Name',
+    const updatedUser = buildUser({
       email: testUser.email,
-      password: testUser.password,
-      title: 'Mr',
-      birth_date: 15,
-      birth_month: 6,
-      birth_year: 1990,
-      firstname: 'UpdatedFirst',
-      lastname: 'UpdatedLast',
-      company: 'UpdatedCompany',
-      address1: '123 Updated St',
-      address2: 'Suite 456',
-      country: 'USA',
-      zipcode: '12345',
-      state: 'CA',
-      city: 'Los Angeles'
-    });
+      password: testUser.password});
 
-    const response = await userClient.updateUser(updatedUser);
-    
-    expectSchema(response, commonResponseSchema);
+    const response = await userClient.updateUser(mapToUpdateUserDto(updatedUser));
+
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBe('User updated!');
     expect(response.data).toBeNull();
 
-    const retrieved = await userClient.getUserByEmail(testUser.email);    
-    const retrievedUser = retrieved.data as UserDetailsResponse;
+    const retrievedResponse = await userClient.getUserByEmail(testUser.email);
+    const retrievedUser = mapToDomainUser(
+      retrievedResponse.data as UserDetailsDto,
+    );
     expectUsersToBeEqual(retrievedUser, updatedUser);
   });
 });

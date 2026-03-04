@@ -2,6 +2,9 @@ import { expect } from '@playwright/test';
 import { test } from '../../../../src/common/fixtures/api-clients.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { boundaryUsers } from '../../../../src/api/data/user-boundaries';
+import { mapToCreateUserDto } from '../../../../src/api/mappers/user.mapper';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 
 test.describe('Create User Boundary Tests', () => {
   const boundaryCases = [
@@ -17,8 +20,10 @@ test.describe('Create User Boundary Tests', () => {
   for (const caseData of boundaryCases) {
     test(caseData.name, async ({ userClient }) => {
       try {
-        const response = await userClient.createUser(caseData.user);
-
+        const response = await userClient.createUser(
+          mapToCreateUserDto(caseData.user),
+        );
+        expectSchema(response.rawBody, validateCommonResponse);
         expect(response.responseCode).toBe(HTTP_STATUS.CREATED);
         expect(response.message).toContain('User created');
       } finally {

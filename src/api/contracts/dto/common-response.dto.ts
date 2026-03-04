@@ -1,4 +1,4 @@
-export interface DeleteAccountResponse {
+export interface CommonResponseDto {
   responseCode: number;
   message: string;
 }

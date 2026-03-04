@@ -1,10 +1,10 @@
 import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 import { expect } from '@playwright/test';
 import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
 import { wrapResponse } from '../../../../src/api/utils/response-wrapper';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 
 test.describe('API: Delete Account - Negative', () => {
   test('Should return an error when deleting with an incorrect password', async ({
@@ -16,7 +16,7 @@ test.describe('API: Delete Account - Negative', () => {
       password: 'WrongPassword123!',
     });
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain('Account not found!');
     expect(response.data).toBeNull();
@@ -30,7 +30,7 @@ test.describe('API: Delete Account - Negative', () => {
       password: 'RandomPass123!',
     });
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain('Account not found!');
     expect(response.data).toBeNull();
@@ -45,7 +45,7 @@ test.describe('API: Delete Account - Negative', () => {
       password: testUser.password,
     });
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain('Account not found');
     expect(response.data).toBeNull();
@@ -59,9 +59,9 @@ test.describe('API: Delete Account - Negative', () => {
       form: { email: testUser.email },
     });
 
-     const response = await wrapResponse(rawResponse);
+    const response = await wrapResponse(rawResponse);
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(response.message).toContain(
       'Bad request, password parameter is missing in DELETE request.',
@@ -85,7 +85,7 @@ test.describe('API: Delete Account - Negative', () => {
       password: testUser.password,
     });
 
-    expectSchema(secondDeleteResponse, commonResponseSchema);
+    expectSchema(secondDeleteResponse.rawBody, validateCommonResponse);
     expect(secondDeleteResponse.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(secondDeleteResponse.message).toContain('Account not found!');
     expect(secondDeleteResponse.data).toBeNull();
@@ -100,7 +100,7 @@ test.describe('API: Delete Account - Negative', () => {
       password: testUser.password,
     });
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain('Account not found');
     expect(response.data).toBeNull();

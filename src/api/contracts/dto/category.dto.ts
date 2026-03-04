@@ -1,4 +1,4 @@
-import { UserTypeDto } from './user-type-dto';
+import { UserTypeDto } from './user-type.dto';
 
 export interface CategoryDto {
   readonly usertype: UserTypeDto;

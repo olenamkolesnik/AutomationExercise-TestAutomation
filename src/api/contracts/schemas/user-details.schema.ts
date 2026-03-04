@@ -34,17 +34,13 @@ export const getUserResponseSchema = {
   properties: {
     httpStatus: { type: 'number' },
     responseCode: { type: 'number' },
-    message: { type: 'string', nullable: true },
+    message: { type: ['string', 'null'] },
     data: {
       anyOf: [
         userDetailsSchema,
         { type: 'null' }
       ]
     },
-    rawBody: {
-      type: 'object',
-      nullable: true,
-      additionalProperties: true
-    }
+    rawBody: { type: ['object', 'null'], additionalProperties: true }
   }
 } as const; // use `as const` to preserve literal types

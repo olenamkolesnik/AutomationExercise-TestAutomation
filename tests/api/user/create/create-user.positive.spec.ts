@@ -1,11 +1,12 @@
 import { test } from '../../../../src/common/fixtures/api-clients.fixture';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
-import { expectUsersToBeEqual } from '../../../../src/api/assertions/assert-users-are-equal';
-import { UserDetailsResponse } from '../../../../src/api/models/responses/user-details.response';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { UserDetailsDto } from '../../../../src/api/contracts/dto/user-details.dto';
 import { expect } from '@playwright/test';
+import { mapToCreateUserDto, mapToDomainUser } from '../../../../src/api/mappers/user.mapper';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
 
 test.describe('Create User Positive Tests', () => {
   let testUser: ReturnType<typeof buildUser>;
@@ -23,15 +24,15 @@ test.describe('Create User Positive Tests', () => {
   test('Should create user with valid required data', async ({
     userClient,
   }) => {
-    const response = await userClient.createUser(testUser);
+    const response = await userClient.createUser(mapToCreateUserDto(testUser));
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.CREATED);
     expect(response.message).toContain('User created!');
     expect(response.data).toBeNull();
 
-    const retrieved = await userClient.getUserByEmail(testUser.email);
-    const retrievedUser = retrieved.data as UserDetailsResponse;
+    const retrievedResponse = await userClient.getUserByEmail(testUser.email);
+    const retrievedUser = mapToDomainUser(retrievedResponse.data as UserDetailsDto);
     expectUsersToBeEqual(retrievedUser, testUser);
   });
 });

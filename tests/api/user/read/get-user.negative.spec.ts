@@ -1,15 +1,15 @@
 import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { commonResponseSchema } from '../../../../src/api/schemas/common-response.schema';
 import { expect } from '@playwright/test';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 
 test.describe('API: Get User Detail By Email — Negative', () => {
   test('Should return 404 for unregistered email', async ({ userClient }) => {
     const email = 'nonexistent.user.' + Date.now() + '@example.com';
     const response = await userClient.getUserByEmail(email);
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toContain(
       'Account not found with this email, try another email!',
@@ -24,7 +24,7 @@ test.describe('API: Get User Detail By Email — Negative', () => {
       undefined as unknown as string,
     );
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBeGreaterThanOrEqual(
       HTTP_STATUS.BAD_REQUEST,
     );
@@ -41,7 +41,8 @@ test.describe('API: Get User Detail By Email — Negative', () => {
     const upperCaseEmail = testUser.email.toUpperCase();
 
     const response = await userClient.getUserByEmail(upperCaseEmail);
-    expectSchema(response, commonResponseSchema);
+
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toBeTruthy();
     expect(response.data).toBeNull();
@@ -54,7 +55,8 @@ test.describe('API: Get User Detail By Email — Negative', () => {
     const emailWithSpaces = `  ${testUser.email}  `;
 
     const response = await userClient.getUserByEmail(emailWithSpaces);
-    expectSchema(response, commonResponseSchema);
+
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBe(HTTP_STATUS.NOT_FOUND);
     expect(response.message).toBeTruthy();
     expect(response.data).toBeNull();
@@ -63,7 +65,7 @@ test.describe('API: Get User Detail By Email — Negative', () => {
   test('Should handle injection-like input safely', async ({ userClient }) => {
     const response = await userClient.getUserByEmail(`' OR 1=1 --`);
 
-    expectSchema(response, commonResponseSchema);
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBeGreaterThanOrEqual(
       HTTP_STATUS.BAD_REQUEST,
     );
@@ -77,7 +79,8 @@ test.describe('API: Get User Detail By Email — Negative', () => {
     const longEmail = `${'a'.repeat(300)}@example.com`;
 
     const response = await userClient.getUserByEmail(longEmail);
-    expectSchema(response, commonResponseSchema);
+
+    expectSchema(response.rawBody, validateCommonResponse);
     expect(response.responseCode).toBeGreaterThanOrEqual(
       HTTP_STATUS.BAD_REQUEST,
     );

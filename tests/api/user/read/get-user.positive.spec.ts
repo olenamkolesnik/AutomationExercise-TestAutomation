@@ -1,23 +1,25 @@
 import { test } from '../../../../src/common/fixtures/user.fixture';
-import { assertUserDetailsResponse } from '../../../../src/api/assertions/assert-user-details-response';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { getUserResponseSchema } from '../../../../src/api/schemas/get-user.response.schema';
-import { expectSchema } from '../../../../src/api/utils/schemaValidator';
-import { expectUsersToBeEqual } from '../../../../src/api/assertions/assert-users-are-equal';
-import { UserDetailsResponse } from '../../../../src/api/models/responses/user-details.response';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
 import { expect } from '@playwright/test';
+import { isUserDetailsDto, validateUserDetails } from '../../../../src/api/contracts/validators/user.validator';
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { UserDetailsDto } from '../../../../src/api/contracts/dto/user-details.dto';
+import { mapToDomainUser } from '../../../../src/api/mappers/user.mapper';
 
 test.describe('API: Get User Detail By Email — Positive', () => {
   test('Should return user details for a valid registered email', async ({
-    userClient, testUser,
+    userClient,
+    testUser,
   }) => {
     const response = await userClient.getUserByEmail(testUser.email);
-    
-    expectSchema(response, getUserResponseSchema);
+
+    expectSchema(response, validateUserDetails);
     expect(response.responseCode).toBe(HTTP_STATUS.OK);
     expect(response.message).toBeUndefined();
-    assertUserDetailsResponse(response.data);
-    const retrievedUser = response.data as UserDetailsResponse;
+
+    isUserDetailsDto(response.data);
+    const retrievedUser = mapToDomainUser(response.data as UserDetailsDto);
     expectUsersToBeEqual(retrievedUser, testUser);
   });
 });
