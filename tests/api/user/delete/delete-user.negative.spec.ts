@@ -2,7 +2,7 @@ import { test } from '../../../../src/common/fixtures/user.fixture';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
 import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
-import { wrapResponse } from '../../../../src/api/utils/response-wrapper';
+import { wrapResponse } from '../../../../src/api/core/response-wrapper';
 import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 

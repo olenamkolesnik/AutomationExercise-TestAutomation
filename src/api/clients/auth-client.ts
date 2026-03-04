@@ -1,21 +1,16 @@
 import { APIRequestContext } from '@playwright/test';
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import { retry } from '../utils/retry';
+import { BaseApiClient } from '../core/base-api.client';
 
-export default class AuthClient {
+export default class AuthClient extends BaseApiClient {
   private readonly defaultFormHeaders = {
-    'Content-Type': 'application/x-www-form-urlencoded',
     Referer: `${process.env.BASE_URL}/login`,
     Origin: `${process.env.BASE_URL}`,
   };
 
-  constructor(private request: APIRequestContext) {
-    logger.debug('AuthClient initialized');
-  }
-
-  private async performRequest<T>(fn: () => Promise<T>) {
-    return retry(fn, 3, 500, 2);
+  constructor( request: APIRequestContext) {
+    super(request);
   }
 
   async login(email: string, password: string): Promise<void> {

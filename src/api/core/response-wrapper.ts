@@ -1,5 +1,5 @@
 import { APIResponse } from '@playwright/test';
-import { ApiResponse } from '../contracts/api-response';
+import { ApiResponse } from './api-response';
 import { logger } from '../../common/utils/logger';
 import type { JsonValue } from '../../common/types/json-type';
 

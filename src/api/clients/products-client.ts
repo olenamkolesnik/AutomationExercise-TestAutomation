@@ -1,17 +1,14 @@
 import { APIRequestContext } from '@playwright/test';
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import { retry } from '../utils/retry';
-import { wrapResponse } from '../utils/response-wrapper';
-import { ApiResponse } from '../contracts/api-response';
+import { wrapResponse } from '../core/response-wrapper';
+import { ApiResponse } from '../core/api-response';
 import { ProductDto } from '../contracts/dto/product.dto';
+import { BaseApiClient } from '../core/base-api.client';
 
-export default class ProductsClient {
-  constructor(private request: APIRequestContext) {
-  }
-
-  private async performRequest<T>(fn: () => Promise<T>) {
-    return retry(fn, 3, 500, 2);
+export default class ProductsClient extends BaseApiClient {
+  constructor(request: APIRequestContext) {
+    super(request);
   }
 
   async getProductsList(): Promise<ApiResponse<ProductDto[]>> {
