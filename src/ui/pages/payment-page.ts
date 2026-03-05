@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
-import { BasePage } from './base-page';
+
 import { Card } from '../models/card.model';
+import { BasePage } from './base-page';
 
 export class PaymentPage extends BasePage {
   private readonly paymentForm = this.page.locator('#payment-form');

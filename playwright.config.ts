@@ -1,13 +1,19 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import {logger, LogLevel} from './src/common/utils/logger';
 import { env } from 'process';
+
+import {logger, LogLevel} from './src/common/utils/logger';
 
 // Load .env from project root
 dotenv.config();
 
 // Configure log level at the start
 logger.setLogLevel(env.LOG_LEVEL as LogLevel);
+
+const baseUrl = process.env.BASE_URL;
+if (!baseUrl) {
+  throw new Error('BASE_URL environment variable is not set. Check your .env file.');
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -27,7 +33,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-     baseURL: process.env.BASE_URL,
+     baseURL: baseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -37,9 +43,27 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'api',
+      testDir: './tests/api',
+      timeout: 60_000, 
+      fullyParallel: true,
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
+    {
+      name: 'ui',
+      testDir: './tests/ui',
+      timeout: 30_000,
+      fullyParallel: true,
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    //{
+    //  name: 'chromium',
+    //  use: { ...devices['Desktop Chrome'] },
+    //},
 
     // {
     //   name: 'firefox',

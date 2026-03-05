@@ -1,10 +1,11 @@
-import { test } from '../../../../src/common/fixtures/user.fixture';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
-import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
-import { wrapResponse } from '../../../../src/api/core/response-wrapper';
-import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { API_ENDPOINTS } from '../../../../src/api/constants/endpoints';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { wrapResponse } from '../../../../src/api/core/response-wrapper';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 
 test.describe('API: Delete Account - Negative', () => {
   test('Should return an error when deleting with an incorrect password', async ({
@@ -36,7 +37,7 @@ test.describe('API: Delete Account - Negative', () => {
     expect(response.data).toBeNull();
   });
 
-  test('Should fail when email is missing', async ({
+  test('Should return an error when email is missing', async ({
     userClient,
     testUser,
   }) => {
@@ -51,7 +52,7 @@ test.describe('API: Delete Account - Negative', () => {
     expect(response.data).toBeNull();
   });
 
-  test('Should fail when password is missing', async ({
+  test('Should return an error when password is missing', async ({
     testUser,
     request,
   }) => {

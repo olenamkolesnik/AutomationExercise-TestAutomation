@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
-import { BasePage } from './base-page';
+
 import { CartItemComponent } from '../components/cart-item.component';
+import { BasePage } from './base-page';
 
 export class CartPage extends BasePage {
   private readonly cartInfoTable = this.page.locator('#cart_info_table');

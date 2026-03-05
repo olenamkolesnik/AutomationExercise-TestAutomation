@@ -1,11 +1,13 @@
-import { test } from '../../../../src/common/fixtures/api-clients.fixture';
-import { buildUser } from '../../../../src/api/data/user-factory';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectSchema } from '../../../../src/api/assertions/expectSchema';
-import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
 import { expect } from '@playwright/test';
-import { mapToCreateUserDto, validateAndMapUser } from '../../../../src/api/mappers/user.mapper';
+
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { buildUser } from '../../../../src/api/data/user-factory';
+import { mapToCreateUserDto, validateAndMapUser } from '../../../../src/api/mappers/user.mapper';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { test } from '../../../../src/common/fixtures/api-clients.fixture';
+import { logger } from '../../../../src/common/utils/logger';
 
 test.describe('Create User Positive Tests', () => {
   let testUser: ReturnType<typeof buildUser>;
@@ -14,10 +16,14 @@ test.describe('Create User Positive Tests', () => {
     testUser = buildUser();
   });
   test.afterEach(async ({ userClient }) => {
-    await userClient.deleteUser({
-      email: testUser.email,
-      password: testUser.password,
-    });
+    try {
+      await userClient.deleteUser({
+        email: testUser.email,
+        password: testUser.password,
+      });
+    } catch (error) {
+      logger.error(`Error occurred while deleting user: ${error}`);
+    }
   });
 
   test('Should create user with valid required data', async ({

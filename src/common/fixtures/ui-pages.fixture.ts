@@ -1,13 +1,13 @@
-import { test as base } from './auth-user.fixture';
-import { ProductsPage } from '../../ui/pages/products-page';
+import { AccountCreatedPage } from '../../ui/pages/account-created-page';
 import { CartPage } from '../../ui/pages/cart-page';
 import { CheckoutPage } from '../../ui/pages/checkout-page';
-import { PaymentPage } from '../../ui/pages/payment-page';
-import { PaymentDonePage } from '../../ui/pages/payment-done-page';
-import {LoginPage} from '../../ui/pages/login-page';
 import {HomePage} from '../../ui/pages/home-page';
-import { AccountCreatedPage } from '../../ui/pages/account-created-page';
+import {LoginPage} from '../../ui/pages/login-page';
+import { PaymentDonePage } from '../../ui/pages/payment-done-page';
+import { PaymentPage } from '../../ui/pages/payment-page';
+import { ProductsPage } from '../../ui/pages/products-page';
 import { SignupPage } from '../../ui/pages/signup-page';
+import { test as base } from './auth-user.fixture';
 
 type UiPageFixtures = {
   productsPage: ProductsPage;

@@ -1,6 +1,6 @@
-import ajv from './ajv.instance';
 import { CommonResponseDto } from '../dto/common-response.dto';
 import { commonResponseSchema } from '../schemas/common-response.schema';
+import ajv from './ajv.instance';
 
 export const validateCommonResponse = ajv.compile<CommonResponseDto>(commonResponseSchema);
 

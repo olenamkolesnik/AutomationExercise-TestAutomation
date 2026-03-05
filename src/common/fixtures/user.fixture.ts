@@ -1,7 +1,7 @@
 import { buildUser } from '../../api/data/user-factory';
-import { test as base } from './api-clients.fixture';
-import { User } from '../models/product/user.model';
 import { mapToCreateUserDto } from '../../api/mappers/user.mapper';
+import { User } from '../models/product/user.model';
+import { test as base } from './api-clients.fixture';
 
 export const test = base.extend<{
   testUser: User;

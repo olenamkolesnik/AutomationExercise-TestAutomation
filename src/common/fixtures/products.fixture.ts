@@ -1,7 +1,7 @@
-import { test as base } from './api-clients.fixture';
-import { Product } from '../../common/models/product/product.model';
 import { validateProductsList } from '../../api/contracts/validators/product.validator';
 import { mapApiProductToModel } from '../../api/mappers/product.mapper';
+import { Product } from '../../common/models/product/product.model';
+import { test as base } from './api-clients.fixture';
 
 export const test = base.extend<{
   product: Product;

@@ -1,5 +1,5 @@
-import { test } from '../../../../src/common/fixtures/ui-pages.fixture';
 import { buildUser } from '../../../../src/api/data/user-factory';
+import { test } from '../../../../src/common/fixtures/ui-pages.fixture';
 
 test.describe('Login Page - New user signup', () => {
   let user: ReturnType<typeof buildUser>;

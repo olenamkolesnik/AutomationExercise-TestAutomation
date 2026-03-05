@@ -1,6 +1,6 @@
-import ajv from './ajv.instance';
-import { getUserResponseSchema } from '../schemas/user-details.schema';
 import { UserDetailsDto } from '../dto/user-details.dto';
+import { getUserResponseSchema } from '../schemas/user-details.schema';
+import ajv from './ajv.instance';
 
 export const validateUserDetails = ajv.compile<UserDetailsDto>(getUserResponseSchema);
 

@@ -1,5 +1,6 @@
-import { maskSensitiveData } from './mask-helper';
+/* eslint-disable no-console */
 import { JsonObject } from '../types/json-type';
+import { maskSensitiveData } from './mask-helper';
 
 export enum LogLevel {
   DEBUG = 'DEBUG',

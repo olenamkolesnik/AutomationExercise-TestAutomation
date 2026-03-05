@@ -1,4 +1,5 @@
-import { Locator, expect } from '@playwright/test';
+import { expect,Locator } from '@playwright/test';
+
 import { DeliveryAddressUi } from '../models/delivery-address.model';
 
 export class DeliveryAddressComponent {

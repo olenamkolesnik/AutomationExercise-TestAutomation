@@ -1,10 +1,11 @@
 import { expect } from '@playwright/test';
-import { test } from '../../../../src/common/fixtures/api-clients.fixture';
+
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
 import { boundaryUsers } from '../../../../src/api/data/user-boundaries';
 import { mapToCreateUserDto } from '../../../../src/api/mappers/user.mapper';
-import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
-import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { test } from '../../../../src/common/fixtures/api-clients.fixture';
 
 test.describe('Create User Boundary Tests', () => {
   const boundaryCases = [

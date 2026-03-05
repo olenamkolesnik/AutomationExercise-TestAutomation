@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
-import { BasePage } from './base-page';
+
 import { User } from '../../common/models/product/user.model';
+import { BasePage } from './base-page';
 export class SignupPage extends BasePage {
   private readonly nameInput = this.page.locator('input[name="name"]');
   private readonly emailInput = this.page.locator('input[name="email"]');

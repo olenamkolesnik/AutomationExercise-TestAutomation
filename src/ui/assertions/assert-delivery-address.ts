@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
-import { DeliveryAddressUi } from '../models/delivery-address.model';
+
 import { User } from '../../common/models/product/user.model';
+import { DeliveryAddressUi } from '../models/delivery-address.model';
 export function assertDeliveryAddress(
   deliveryAddressUi: DeliveryAddressUi,
   person: User,

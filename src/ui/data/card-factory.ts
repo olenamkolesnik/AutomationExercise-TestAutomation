@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+
 import { Card } from '../models/card.model';
 
 export type CardOverrides = Partial<Card>;

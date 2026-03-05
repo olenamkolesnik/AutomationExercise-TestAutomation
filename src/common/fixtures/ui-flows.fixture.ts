@@ -1,7 +1,7 @@
-import { test as pages } from './ui-pages.fixture';
 import { AddToCartFlow } from '../../ui/flows/add-to-cart.flow';
 import { CheckoutFlow } from '../../ui/flows/checkout.flow';
 import { PaymentFlow } from '../../ui/flows/payment.flow';
+import { test as pages } from './ui-pages.fixture';
 
 type UiFlowFixtures = {
   addToCartFlow: AddToCartFlow;

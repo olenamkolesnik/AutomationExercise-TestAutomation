@@ -1,6 +1,7 @@
-import { Locator, expect } from '@playwright/test';
-import { OrderSummaryUi } from '../models/order-summary.model';
+import { expect,Locator } from '@playwright/test';
+
 import { parsePrice } from '../../common/utils/price-parser';
+import { OrderSummaryUi } from '../models/order-summary.model';
 
 export class OrderSummaryComponent {
   constructor(private readonly root: Locator) {}

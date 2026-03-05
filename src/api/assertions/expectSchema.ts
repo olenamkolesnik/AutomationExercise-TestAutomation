@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+
 import { logger } from '../../common/utils/logger';
 
 export function expectSchema<T>(

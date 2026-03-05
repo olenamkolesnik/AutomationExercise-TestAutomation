@@ -1,7 +1,8 @@
 import { Locator } from '@playwright/test';
-import { CartItemUi } from '../models/cart-item.model';
 import { expect } from '@playwright/test';
+
 import { parsePrice } from '../../common/utils/price-parser';
+import { CartItemUi } from '../models/cart-item.model';
 
 export class CartItemComponent {
   constructor(private readonly root: Locator) {}

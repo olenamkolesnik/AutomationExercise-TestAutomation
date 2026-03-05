@@ -1,7 +1,8 @@
 import { APIResponse } from '@playwright/test';
-import { ApiResponse } from './api-response';
-import { logger } from '../../common/utils/logger';
+
 import type { JsonValue } from '../../common/types/json-type';
+import { logger } from '../../common/utils/logger';
+import { ApiResponse } from './api-response';
 
 type RawApiResponse = {
   responseCode: number;

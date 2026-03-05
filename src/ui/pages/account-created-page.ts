@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test';
+
 import { BasePage } from './base-page';
 export class AccountCreatedPage extends BasePage {
   private readonly accountCreatedHeading = this.page.getByRole('heading', {

@@ -1,10 +1,11 @@
-import { test } from '../../../../src/common/fixtures/user.fixture';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
-import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
 import { expect } from '@playwright/test';
-import { validateUserDetails } from '../../../../src/api/contracts/validators/user.validator';
+
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
+import { validateUserDetails } from '../../../../src/api/contracts/validators/user.validator';
 import { validateAndMapUser } from '../../../../src/api/mappers/user.mapper';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 
 test.describe('API: Get User Detail By Email — Positive', () => {
   test('Should return user details for a valid registered email', async ({

@@ -1,15 +1,16 @@
 import { APIRequestContext } from '@playwright/test';
+
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
+import { CommonResponseDto } from '../contracts/dto/common-response.dto';
+import { CreateUserDto } from '../contracts/dto/create-user.dto';
+import { DeleteUserDto } from '../contracts/dto/delete-user.dto';
+import { UpdateUserDto } from '../contracts/dto/update-user.dto';
+import { UserDetailsDto } from '../contracts/dto/user-details.dto';
+import { ApiResponse } from '../core/api-response';
+import { BaseApiClient } from '../core/base-api.client';
 import { wrapResponse } from '../core/response-wrapper';
 import { toFormPayload } from '../utils/form-helper';
-import { ApiResponse } from '../core/api-response';
-import { CommonResponseDto } from '../contracts/dto/common-response.dto';
-import { UserDetailsDto } from '../contracts/dto/user-details.dto';
-import { UpdateUserDto } from '../contracts/dto/update-user.dto';
-import { DeleteUserDto } from '../contracts/dto/delete-user.dto';
-import { BaseApiClient } from '../core/base-api.client';
-import { CreateUserDto } from '../contracts/dto/create-user.dto';
 
 export default class UserClient extends BaseApiClient {
   constructor(request: APIRequestContext) {

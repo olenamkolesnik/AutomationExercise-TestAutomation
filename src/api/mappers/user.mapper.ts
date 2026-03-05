@@ -1,8 +1,8 @@
-import { Title } from '../constants/titles';
 import { User } from '../../common/models/product/user.model';
+import { Title } from '../constants/titles';
 import { CreateUserDto } from '../contracts/dto/create-user.dto';
-import { UserDetailsDto } from '../contracts/dto/user-details.dto';
 import { UpdateUserDto } from '../contracts/dto/update-user.dto';
+import { UserDetailsDto } from '../contracts/dto/user-details.dto';
 import { isUserDetailsDto } from '../contracts/validators/user.validator';
 
 export function mapToCreateUserDto(user: User): CreateUserDto {

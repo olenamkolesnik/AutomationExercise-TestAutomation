@@ -1,7 +1,7 @@
-import { test as base } from './infrastructure.fixture';
-import UserClient from '../../api/clients/user-client';
-import ProductsClient from '../../api/clients/products-client';
 import AuthClient from '../../api/clients/auth-client';
+import ProductsClient from '../../api/clients/products-client';
+import UserClient from '../../api/clients/user-client';
+import { test as base } from './infrastructure.fixture';
 
 type ApiClients = {
   userClient: UserClient;

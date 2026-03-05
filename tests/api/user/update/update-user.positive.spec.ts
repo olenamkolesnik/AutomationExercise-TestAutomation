@@ -1,14 +1,15 @@
-import { test } from '../../../../src/common/fixtures/user.fixture';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
+
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
-import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { buildUser } from '../../../../src/api/data/user-factory';
 import {
   mapToUpdateUserDto,
   validateAndMapUser,
 } from '../../../../src/api/mappers/user.mapper';
-import { buildUser } from '../../../../src/api/data/user-factory';
+import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 
 test.describe('API: Update Account Positive Tests - Positive', () => {
   test('Update all updatable fields with valid data', async ({

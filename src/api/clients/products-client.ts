@@ -1,10 +1,11 @@
 import { APIRequestContext } from '@playwright/test';
+
 import { logger } from '../../common/utils/logger';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import { wrapResponse } from '../core/response-wrapper';
-import { ApiResponse } from '../core/api-response';
 import { ProductDto } from '../contracts/dto/product.dto';
+import { ApiResponse } from '../core/api-response';
 import { BaseApiClient } from '../core/base-api.client';
+import { wrapResponse } from '../core/response-wrapper';
 
 export default class ProductsClient extends BaseApiClient {
   constructor(request: APIRequestContext) {

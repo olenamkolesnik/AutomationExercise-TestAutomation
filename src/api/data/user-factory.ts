@@ -1,14 +1,16 @@
 import { faker } from '@faker-js/faker';
+
 import { logger } from '../../../src/common/utils/logger';
-import { TITLES } from '../constants/titles';
-import { COUNTRIES } from '../constants/countries';
 import { User } from '../../common/models/product/user.model';
+import { COUNTRIES } from '../constants/countries';
+import { TITLES } from '../constants/titles';
 
 export type UserOverrides = Partial<User>;
 
 export function buildUser(overrides: UserOverrides = {}): User {
   const currentYear = new Date().getFullYear();
-  const maxYear = currentYear - 18;
+  const MINIMUM_USER_AGE = 18;
+  const maxYear = currentYear - MINIMUM_USER_AGE;
 
   const base: User = {
     name: faker.person.firstName(),

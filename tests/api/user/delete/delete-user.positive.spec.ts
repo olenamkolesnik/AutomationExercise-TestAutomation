@@ -1,8 +1,9 @@
-import { test } from '../../../../src/common/fixtures/user.fixture';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
-import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 
 test.describe('API: Delete Account - Positive', () => {
   test('should delete account successfully with valid credentials', async ({

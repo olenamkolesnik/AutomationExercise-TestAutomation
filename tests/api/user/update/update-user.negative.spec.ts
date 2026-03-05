@@ -1,12 +1,13 @@
-import { test } from '../../../../src/common/fixtures/user.fixture';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
+
+import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
+import { UpdateUserDto } from '../../../../src/api/contracts/dto/update-user.dto';
+import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
 import { buildUser } from '../../../../src/api/data/user-factory';
 import { mapToUpdateUserDto } from '../../../../src/api/mappers/user.mapper';
-import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
-import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { test } from '../../../../src/common/fixtures/user.fixture';
 import { omitField } from '../../../../src/common/utils/object.utils';
-import { UpdateUserDto } from '../../../../src/api/contracts/dto/update-user.dto';
 
 test.describe('API: Update User - Negative', () => {
   test('Should fail when email is missing', async ({

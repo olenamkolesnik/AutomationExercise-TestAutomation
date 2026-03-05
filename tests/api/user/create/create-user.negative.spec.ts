@@ -1,10 +1,11 @@
-import { test } from '../../../../src/common/fixtures/api-clients.fixture';
-import { buildUser } from '../../../../src/api/data/user-factory';
-import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expect } from '@playwright/test';
+
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
+import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
+import { buildUser } from '../../../../src/api/data/user-factory';
 import { mapToCreateUserDto } from '../../../../src/api/mappers/user.mapper';
+import { test } from '../../../../src/common/fixtures/api-clients.fixture';
 
 test.describe('Create User Negative Tests', () => {
   test('Duplicate email', async ({ userClient }) => {

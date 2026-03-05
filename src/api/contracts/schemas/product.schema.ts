@@ -1,6 +1,7 @@
 import { JSONSchemaType } from 'ajv';
-import { ProductDto } from '../dto/product.dto';
+
 import { CategoryDto } from '../dto/category.dto';
+import { ProductDto } from '../dto/product.dto';
 import { UserTypeDto } from '../dto/user-type.dto';
 
 export const userTypeSchema: JSONSchemaType<UserTypeDto> = {

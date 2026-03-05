@@ -1,5 +1,6 @@
-import { test as base } from './user.fixture';
 import { Page } from '@playwright/test';
+
+import { test as base } from './user.fixture';
 
 export const test = base.extend<{
   authPage: Page;

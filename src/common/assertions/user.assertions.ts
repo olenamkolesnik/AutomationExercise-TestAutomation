@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { expect } from '@playwright/test';
+
 import { User } from '../models/product/user.model';
 
 export function expectUsersToBeEqual(
