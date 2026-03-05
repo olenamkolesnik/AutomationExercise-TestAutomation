@@ -15,8 +15,10 @@ export async function wrapResponse<T>(
   const rawText = await response.text();
 
   if (!rawText?.trim()) {
-    throw new Error('Empty API response body');
-  }
+  const error = new Error(`Empty API response body (HTTP ${response.status()})`);
+  error.cause = { url: response.url(), status: response.status() };
+  throw error;
+}
 
   let parsed: RawApiResponse;
 

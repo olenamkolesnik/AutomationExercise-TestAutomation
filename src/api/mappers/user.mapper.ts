@@ -3,6 +3,7 @@ import { User } from '../../common/models/product/user.model';
 import { CreateUserDto } from '../contracts/dto/create-user.dto';
 import { UserDetailsDto } from '../contracts/dto/user-details.dto';
 import { UpdateUserDto } from '../contracts/dto/update-user.dto';
+import { isUserDetailsDto } from '../contracts/validators/user.validator';
 
 export function mapToCreateUserDto(user: User): CreateUserDto {
   return {
@@ -72,4 +73,10 @@ export function mapToUpdateUserDto(user: User): UpdateUserDto {
     zipcode: user.address?.zipCode ?? '',
     mobile_number: user.mobileNumber ?? '',
   };
+}
+
+export function validateAndMapUser(data: unknown): User {
+  isUserDetailsDto(data);
+  const retrievedUser = mapToDomainUser(data as UserDetailsDto);
+  return retrievedUser;
 }

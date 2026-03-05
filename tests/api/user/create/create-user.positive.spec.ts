@@ -3,9 +3,8 @@ import { buildUser } from '../../../../src/api/data/user-factory';
 import { HTTP_STATUS } from '../../../../src/api/constants/http-status';
 import { expectSchema } from '../../../../src/api/assertions/expectSchema';
 import { expectUsersToBeEqual } from '../../../../src/common/assertions/user.assertions';
-import { UserDetailsDto } from '../../../../src/api/contracts/dto/user-details.dto';
 import { expect } from '@playwright/test';
-import { mapToCreateUserDto, mapToDomainUser } from '../../../../src/api/mappers/user.mapper';
+import { mapToCreateUserDto, validateAndMapUser } from '../../../../src/api/mappers/user.mapper';
 import { validateCommonResponse } from '../../../../src/api/contracts/validators/common-response.validator';
 
 test.describe('Create User Positive Tests', () => {
@@ -32,7 +31,7 @@ test.describe('Create User Positive Tests', () => {
     expect(response.data).toBeNull();
 
     const retrievedResponse = await userClient.getUserByEmail(testUser.email);
-    const retrievedUser = mapToDomainUser(retrievedResponse.data as UserDetailsDto);
+    const retrievedUser = validateAndMapUser(retrievedResponse.data);
     expectUsersToBeEqual(retrievedUser, testUser);
   });
 });
