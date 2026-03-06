@@ -1,7 +1,0 @@
-export function toFormPayload(obj: object): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([, value]) => value !== undefined && value !== null)
-      .map(([key, value]) => [key, String(value)])
-  );
-}
