@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
 import { env } from 'process';
 
-import {logger, LogLevel} from './src/common/utils/logger';
+import { logger, LogLevel } from './src/common/utils/logger';
 
 // Load .env from project root
 dotenv.config();
@@ -12,7 +12,9 @@ logger.setLogLevel(env.LOG_LEVEL as LogLevel);
 
 const baseUrl = process.env.BASE_URL;
 if (!baseUrl) {
-  throw new Error('BASE_URL environment variable is not set. Check your .env file.');
+  throw new Error(
+    'BASE_URL environment variable is not set. Check your .env file.',
+  );
 }
 
 /**
@@ -29,14 +31,20 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
+    ['github'],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-     baseURL: baseUrl,
+    baseURL: baseUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     headless: true,
   },
 
@@ -45,7 +53,7 @@ export default defineConfig({
     {
       name: 'api',
       testDir: './tests/api',
-      timeout: 60_000, 
+      timeout: 60_000,
       fullyParallel: true,
       use: {
         ...devices['Desktop Chrome'],
