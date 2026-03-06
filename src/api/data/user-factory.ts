@@ -14,7 +14,7 @@ export function buildUser(overrides: UserOverrides = {}): User {
 
   const base: User = {
     name: faker.person.firstName(),
-    email: `autotest+${Date.now()}@example.com`,
+    email: `autotest+${Date.now().toString()}@example.com`,
     password: faker.internet.password({ length: 10 }),
     title: faker.helpers.arrayElement(TITLES),
     birthDate: {

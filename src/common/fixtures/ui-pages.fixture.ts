@@ -1,8 +1,8 @@
 import { AccountCreatedPage } from '../../ui/pages/account-created-page';
 import { CartPage } from '../../ui/pages/cart-page';
 import { CheckoutPage } from '../../ui/pages/checkout-page';
-import {HomePage} from '../../ui/pages/home-page';
-import {LoginPage} from '../../ui/pages/login-page';
+import { HomePage } from '../../ui/pages/home-page';
+import { LoginPage } from '../../ui/pages/login-page';
 import { PaymentDonePage } from '../../ui/pages/payment-done-page';
 import { PaymentPage } from '../../ui/pages/payment-page';
 import { ProductsPage } from '../../ui/pages/products-page';
@@ -21,7 +21,29 @@ type UiPageFixtures = {
   accountCreatedPage: AccountCreatedPage;
 };
 
+// Ad domains to block
+const blockedAdDomains = [
+  'doubleclick.net',
+  'googlesyndication.com',
+  'googleads.g.doubleclick.net',
+  'adsystem.com',
+  'adservice.google.com',
+];
+
 export const test = base.extend<UiPageFixtures>({
+  // Override page fixture for all Page Objects
+  page: async ({ page }, use) => {
+    await page.route('**/*', (route) => {
+      const url = route.request().url();
+      if (blockedAdDomains.some((domain) => url.includes(domain))) {
+        return route.abort();
+      }
+      route.continue();
+    });
+
+    await use(page);
+  },
+
   productsPage: async ({ authPage }, use) => {
     await use(new ProductsPage(authPage));
   },
