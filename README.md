@@ -1,5 +1,7 @@
 [![Playwright Tests](https://github.com/olenamkolesnik/AutomationExercise-TestAutomation/actions/workflows/playwright.yml/badge.svg)](https://github.com/olenamkolesnik/AutomationExercise-TestAutomation/actions/workflows/playwright.yml)
+
 [View latest Playwright report ⬈](https://olenamkolesnik.github.io/AutomationExercise-TestAutomation/)
+
 # AutomationExercise Test Automation
 
 A comprehensive, professionally-structured test automation suite for [AutomationExercise](https://automationexercise.com) using TypeScript and Playwright. Features both API and UI test coverage with robust data management, type-safe contracts, and industry best practices.
