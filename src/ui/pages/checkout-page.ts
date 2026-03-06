@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 
+import { logger } from '../../common/utils/logger';
 import { CartItemComponent } from '../components/cart-item.component';
 import { DeliveryAddressComponent } from '../components/delivery-address.component';
 import { OrderSummaryComponent } from '../components/order-summary.component';
@@ -20,9 +21,11 @@ export class CheckoutPage extends BasePage {
   async expectPageOpened() {
     await expect(this.page).toHaveURL(/\/checkout/);
     await expect(this.cartTable).toBeVisible();
+    logger.info('Checkout page is opened with correct URL and cart table is visible');
   }
 
   async getCartItemByName(name: string){
+    logger.info(`Looking for cart item with name "${name}" in the checkout page`);
     const row = this.cartRows.filter({ hasText: name });
     await expect(row, `Cart item "${name}" not found`).toHaveCount(1);
     
@@ -46,5 +49,6 @@ export class CheckoutPage extends BasePage {
       this.page.waitForURL(/\/payment/),
       this.placeOrderButton.click(),
     ]);
+    logger.info('Clicked on Place Order button and navigated to payment page');
   }
 }

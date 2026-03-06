@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 
+import { logger } from '../../common/utils/logger';
 import { Card } from '../models/card.model';
 import { BasePage } from './base-page';
 
@@ -31,9 +32,13 @@ export class PaymentPage extends BasePage {
   async expectPageOpened() {
     await expect(this.page).toHaveURL(/\/payment/);
     await expect(this.cardNumber).toBeVisible();
+    logger.info(
+      'Payment page is opened with correct URL and card number input is visible',
+    );
   }
 
   async fillCardDetails(card: Card): Promise<void> {
+    logger.info(`Filling card details with name on card "${card.nameOnCard}", card number "${card.cardNumber}", cvc "${card.cvc}", expiration month "${card.expirationMonthMM}" and expiration year "${card.expirationYearYYYY}"`);
     await this.nameOnCard.fill(card.nameOnCard);
     await this.cardNumber.fill(card.cardNumber);
     await this.cvc.fill(card.cvc);
@@ -46,5 +51,6 @@ export class PaymentPage extends BasePage {
       this.page.waitForURL(/\/payment_done/),
       this.payAndConfirmOrderButton.click(),
     ]);
+    logger.info('Submitted card details and navigated to payment done page');
   }
 }

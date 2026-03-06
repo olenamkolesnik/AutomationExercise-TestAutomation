@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
+import { logger } from '../../common/utils/logger';
 import { BasePage } from './base-page';
 
 export class ProductsPage extends BasePage {
@@ -17,14 +18,17 @@ export class ProductsPage extends BasePage {
   async navigateToProducts() {
     await this.page.goto('/products');
     await this.expectOpened();
+    logger.info('Navigated to products page and verified that it is opened');
   }
 
   async searchForProduct(productName: string) {
+    logger.info(`Searching for product with name "${productName}"`);
     await this.searchProduct.fill(productName);
     await this.searchButton.click();
   }
 
   async addProductToCartByName(productName: string) {
+    logger.info(`Adding product with name "${productName}" to cart`);
     const card = this.productCards.filter({ hasText: productName });
     await card.scrollIntoViewIfNeeded();
 
@@ -40,5 +44,6 @@ export class ProductsPage extends BasePage {
 
   async expectOpened() {
     await expect(this.page).toHaveURL(/\/products/);
+    logger.info('Products page is opened with correct URL');
   }
 }

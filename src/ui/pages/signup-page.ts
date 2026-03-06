@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
 import { User } from '../../common/models/product/user.model';
+import { logger } from '../../common/utils/logger';
 import { BasePage } from './base-page';
 export class SignupPage extends BasePage {
   private readonly nameInput = this.page.locator('input[name="name"]');
@@ -50,9 +51,11 @@ export class SignupPage extends BasePage {
   async expectOpened() {
     await expect(this.page).toHaveURL(/\/signup/);
     await expect(this.createAccountButton).toBeVisible();
+    logger.info('Signup page is opened with correct URL and create account button is visible');
   }
 
   async fillSignupForm(user: User) {
+    logger.info(`Filling signup form with name "${user.name}", email "${user.email}", password "******", title "${user.title}", birth date "${user.birthDate.day}/${user.birthDate.month}/${user.birthDate.year}",first name "${user.firstName}", last name "${user.lastName}", company "${user.company}", address line 1 "${user.address?.line1}", address line 2 "${user.address?.line2}", state "${user.address?.state}", city "${user.address?.city}", zip code "${user.address?.zipCode}" and mobile number "${user.mobileNumber}"`);
     await this.page.getByRole('radio', { name: `${user.title}.` }).check();
     await this.passwordInput.fill(user.password);
     await this.daysSelect.selectOption(user.birthDate.day.toString());
@@ -76,5 +79,6 @@ export class SignupPage extends BasePage {
       this.page.waitForURL(/\/account_created/),
       this.createAccountButton.click(),
     ]);
+    logger.info('Submitted signup form and navigated to account created page');
   }
 }

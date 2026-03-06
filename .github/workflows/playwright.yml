@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   test:
     timeout-minutes: 60
@@ -51,3 +54,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: playwright-report
+
+      - name: Report URL
+        if: always()
+        run: echo "Report available at https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          
