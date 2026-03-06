@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 
 import { logger } from '../../common/utils/logger';
+import { AdvertisementComponent } from '../components/advertisement.component';
 import { CartItemComponent } from '../components/cart-item.component';
 import { DeliveryAddressComponent } from '../components/delivery-address.component';
 import { OrderSummaryComponent } from '../components/order-summary.component';
@@ -54,11 +55,12 @@ export class CheckoutPage extends BasePage {
 
   async clickPlaceOrder() {
     await this.placeOrderButton.click();
+
+    await new AdvertisementComponent(this.page).closeIfVisible();
     
-    // wait for the payment page, ignoring intermediate fragment navigations
-    await this.page.waitForURL('**/payment', {
-      timeout: 30000, // longer for safety
-      waitUntil: 'domcontentloaded',
-    });
+    await this.page.waitForFunction(
+    () => window.location.href.includes('/payment'),
+    { timeout: 30000 }
+  );
   }
 }
