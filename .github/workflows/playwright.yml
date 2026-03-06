@@ -2,9 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -38,16 +38,16 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
-      - name: Upload JUnit results
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: junit-results
-          path: test-results/junit.xml
+          name: test-results
+          path: test-results/
 
-      - name: Upload JSON results
+      - name: Deploy Playwright report to GitHub Pages
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: json-results
-          path: test-results/results.json
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: playwright-report
