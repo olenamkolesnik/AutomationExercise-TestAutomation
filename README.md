@@ -1,6 +1,6 @@
 [![Playwright Tests](https://github.com/olenamkolesnik/AutomationExercise-TestAutomation/actions/workflows/playwright.yml/badge.svg)](https://github.com/olenamkolesnik/AutomationExercise-TestAutomation/actions/workflows/playwright.yml)
 
-[View latest Playwright report ⬈](https://olenamkolesnik.github.io/AutomationExercise-TestAutomation/)
+[View Playwright report history ⬈](https://olenamkolesnik.github.io/AutomationExercise-TestAutomation/)
 
 # AutomationExercise Test Automation
 
@@ -27,7 +27,7 @@ A comprehensive, professionally-structured test automation suite for [Automation
 ### Key Features
 
 - **🔍 Comprehensive Test Coverage**
-  - API testing for user management, products, and authentication
+  - API testing currently focused on user management, with client support for products and authentication
   - UI/E2E scenarios covering signup, login, cart, checkout, and payment flows
   - Positive, negative, and boundary test cases
 
@@ -92,7 +92,7 @@ A comprehensive, professionally-structured test automation suite for [Automation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/automationexercise-testautomation.git
+   git clone https://github.com/olenamkolesnik/AutomationExercise-TestAutomation.git
    cd automationexercise-testautomation
    ```
 
@@ -107,7 +107,7 @@ A comprehensive, professionally-structured test automation suite for [Automation
    ```
 
 4. **Create environment configuration**
-   
+    
    Create a `.env` file in the project root:
    ```bash
    cp .env.example .env  # If example exists
@@ -182,7 +182,7 @@ npx playwright show-report
 
 **JSON Report** - machine-readable test results:
 ```bash
-cat test-results/results.json
+cat test-results/test-results.json
 ```
 
 ---
@@ -236,6 +236,7 @@ test.describe('Create User Positive Tests', () => {
 
 **Coverage includes:**
 - User Management (Create, Read, Update, Delete)
+- Client support for Products and Authentication APIs
 
 **Test Variations:**
 - **Positive Tests** - valid inputs, expected success
@@ -481,6 +482,18 @@ npx playwright test --reporter=html,junit,json,github
 
 **Issue: Sensitive data visible in logs**
 - **Solution**: Verify `maskHelper.ts` is properly masking credentials
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome. If you'd like to improve the framework, open an issue or submit a pull request with a clear description of the change and its purpose.
+
+---
+
+## 📄 License
+
+This project is licensed under the ISC License.
 
 ---
 

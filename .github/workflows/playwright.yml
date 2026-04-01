@@ -16,6 +16,7 @@ jobs:
     env:
       LOG_LEVEL: INFO
       BASE_URL: ${{ secrets.BASE_URL }}
+      REPORT_ID: run-${{ github.run_number }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,15 +49,73 @@ jobs:
           name: test-results
           path: test-results/
 
+      - name: Prepare GitHub Pages report history
+        if: always()
+        run: |
+          set -eux
+
+          PAGES_DIR="gh-pages-history"
+          REPORTS_DIR="$PAGES_DIR/reports"
+          CURRENT_REPORT_DIR="$REPORTS_DIR/$REPORT_ID"
+          REPO_URL="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          if git ls-remote --exit-code --heads origin gh-pages; then
+            git clone --branch gh-pages --depth 1 "$REPO_URL" "$PAGES_DIR"
+          else
+            mkdir -p "$PAGES_DIR"
+          fi
+
+          rm -rf "$CURRENT_REPORT_DIR"
+          mkdir -p "$CURRENT_REPORT_DIR"
+          cp -R playwright-report/. "$CURRENT_REPORT_DIR/"
+
+          mkdir -p "$REPORTS_DIR"
+
+          {
+            echo '<!DOCTYPE html>'
+            echo '<html lang="en">'
+            echo '<head>'
+            echo '  <meta charset="UTF-8">'
+            echo '  <meta name="viewport" content="width=device-width, initial-scale=1.0">'
+            echo '  <title>Playwright Report History</title>'
+            echo '  <style>'
+            echo '    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; line-height: 1.5; }'
+            echo '    h1 { margin-bottom: 8px; }'
+            echo '    p { color: #444; }'
+            echo '    ul { padding-left: 20px; }'
+            echo '    li { margin: 8px 0; }'
+            echo '    a { color: #0969da; text-decoration: none; }'
+            echo '    a:hover { text-decoration: underline; }'
+            echo '    .meta { color: #666; font-size: 14px; }'
+            echo '  </style>'
+            echo '</head>'
+            echo '<body>'
+            echo '  <h1>Playwright Report History</h1>'
+            echo "  <p>Repository: ${GITHUB_REPOSITORY}</p>"
+            echo "  <p>Latest run: <a href=\"reports/${REPORT_ID}/index.html\">${REPORT_ID}</a></p>"
+            echo '  <ul>'
+
+            find "$REPORTS_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -Vr | while read -r report_dir; do
+              echo "    <li><a href=\"reports/${report_dir}/index.html\">${report_dir}</a></li>"
+            done
+
+            echo '  </ul>'
+            echo '</body>'
+            echo '</html>'
+          } > "$PAGES_DIR/index.html"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy Playwright report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report
-          keep_files: true
+          publish_dir: gh-pages-history
 
       - name: Report URL
         if: always()
-        run: echo "Report available at https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+        run: |
+          echo "Report history: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "Current run report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.REPORT_ID }}/"
           
