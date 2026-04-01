@@ -57,10 +57,10 @@ export class CheckoutPage extends BasePage {
     await this.placeOrderButton.click();
 
     await new AdvertisementComponent(this.page).closeIfVisible();
-    
+
     await this.page.waitForFunction(
-    () => window.location.href.includes('/payment'),
-    { timeout: 30000 }
-  );
+      () => window.location.href.includes('/payment'),
+      { timeout: 30000 },
+    );
   }
 }
